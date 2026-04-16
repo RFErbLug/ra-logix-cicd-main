@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CD_Deployment": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Users\\ASYost\\Desktop\\RA_CICD_FINAL\\ra-cicd-test6\\ C:\\CD-Pipeline-Files\\"
+    }
+  }
+}

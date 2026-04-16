@@ -1,0 +1,14 @@
+RESULT |  TEST DATE & TIME   | TEST LENGTH |  COMMIT HASH TESTED                      |   TEST REPORT FILE PATH
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+PASS   | 11/15/2024 04:45 AM | 00:29:12    | ac7cf7949621adf6bf52d0e2e4117b05ed0373b9 | C:\CI-Pipeline-Files\1-textreports\20241115044512_ExampleWithCICD_L85E_UnitTestReport.txt
+PASS   | 11/15/2024 04:45 AM | 00:29:12    | ac7cf7949621adf6bf52d0e2e4117b05ed0373b9 | C:\CI-Pipeline-Files\2-excelreports\20241115044512_ExampleWithCICD_L85E_UnitTestReport.xlsx
+PASS   | 11/15/2024 04:42 AM | 00:03:02    | ac7cf7949621adf6bf52d0e2e4117b05ed0373b9 | C:\CI-Pipeline-Files\1-textreports\20241115044209_DelayedSum_UnitTestReport.txt
+PASS   | 11/15/2024 04:42 AM | 00:03:02    | ac7cf7949621adf6bf52d0e2e4117b05ed0373b9 | C:\CI-Pipeline-Files\2-excelreports\20241115044209_DelayedSum_UnitTestReport.xlsx
+PASS   | 11/15/2024 03:49 AM | 00:01:40    | b3d127e5f8721c11d17fb0b3d0ee344c357e6b4e | C:\CI-Pipeline-Files\1-textreports\20241115034959_ExampleWithCICD_L85E_UnitTestReport.txt
+PASS   | 11/15/2024 03:49 AM | 00:01:40    | b3d127e5f8721c11d17fb0b3d0ee344c357e6b4e | C:\CI-Pipeline-Files\2-excelreports\20241115034959_ExampleWithCICD_L85E_UnitTestReport.xlsx
+PASS   | 11/15/2024 03:48 AM | 00:01:32    | b3d127e5f8721c11d17fb0b3d0ee344c357e6b4e | C:\CI-Pipeline-Files\1-textreports\20241115034825_DelayedSum_UnitTestReport.txt	
+PASS   | 11/15/2024 03:48 AM | 00:01:32    | b3d127e5f8721c11d17fb0b3d0ee344c357e6b4e | C:\CI-Pipeline-Files\2-excelreports\20241115034825_DelayedSum_UnitTestReport.xlsx
+PASS   | 11/15/2024 02:47 AM | 00:01:44    | 062c375b67e6317f00dfac6674757b37170637bd | C:\CI-Pipeline-Files\1-textreports\20241115024745_ExampleWithCICD_L85E_UnitTestReport.txt
+PASS   | 11/15/2024 02:47 AM | 00:01:44    | 062c375b67e6317f00dfac6674757b37170637bd | C:\CI-Pipeline-Files\2-excelreports\20241115024745_ExampleWithCICD_L85E_UnitTestReport.xlsx
+PASS   | 11/15/2024 02:46 AM | 00:01:21    | 062c375b67e6317f00dfac6674757b37170637bd | C:\CI-Pipeline-Files\1-textreports\20241115024623_DelayedSum_UnitTestReport.txt	
+PASS   | 11/15/2024 02:46 AM | 00:01:21    | 062c375b67e6317f00dfac6674757b37170637bd | C:\CI-Pipeline-Files\2-excelreports\20241115024623_DelayedSum_UnitTestReport.xlsx

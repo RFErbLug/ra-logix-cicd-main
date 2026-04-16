@@ -1,0 +1,50 @@
+--------------------------------------------------------------
+-                                                            -
+-            CI/CD for Logix Control Systems                 -
+-             Repository Contents Breakdown                  -
+-                                                            -
+--------------------------------------------------------------
+
+
+ra-logix-cicd
+├───1-production-files
+│   ├───ACDs <---------------------------------- Contains the ACD files to be tested and deployed.
+│   └───L5Xs <---------------------------------- Contains the L5X files to be tested and (optionally) deployed.
+├───2-cicd-config
+│   ├───1-ci-teststage
+│   │   ├───1-ci-jenkinsfile <------------------ Contains the Jenkinsfile used to execute the continuous integration Jenkins pipeline.
+│   │   ├───2-ci-unittestscript <--------------- Contains the C# solution used to execute AOI and full application unit testing using EchoSDK and LDSDK for CI.
+│   │   │   ├───ConsoleFormatter_ClassLibrary
+│   │   │   ├───LogixDesigner_ClassLibrary
+│   │   │   ├───LogixEcho_ClassLibrary
+│   │   │   └───UnitTesting_ConsoleApp
+│   │   │       └───UnitTestScripts 
+│   │   └───3-ci-inputexcelworkbooks <---------- Contains the excel workbooks used as C# solution inputs, defining test cases and target objects for unit testing.
+│   │       └───ci-inputexcelworkbook-template
+│   └───2-cd-deploystage 
+│       ├───1-cd-jenkinsfile <------------------ Contains the Jenkinsfile used to execute the continuous deployment Jenkins pipeline.
+│       ├───2-cd-deploymentscript <------------- Contains the C# solution used to download full applications to controller using EchoSDK (if demoing) and LDSDK for CD.
+│       │   ├───CD_Deployment
+│       │   ├───ConsoleFormatter_ClassLibrary
+│       │   ├───LogixDesigner_ClassLibrary
+│       │   └───LogixEcho_ClassLibrary
+│       └───3-cd-inputexcelworkbooks <---------- Contains the excel workbooks used as C# solution inputs, defining which applications to download to with controllers.
+├───3-test-report-examples <-------------------- Contains some example logs and reports typically generated during testing.
+├───4-standalone-testscript <------------------- Contains the C# solution used to execute AOI and full application unit testing using EchoSDK and LDSDK.
+│   ├───ConsoleFormatter_ClassLibrary
+│   ├───LogixDesigner_ClassLibrary
+│   ├───LogixEcho_ClassLibrary
+│   └───UnitTesting_ConsoleApp
+│       └───UnitTestScripts
+└───5-help-documents <-------------------------- You've found me! This folder contains supporting information for this repository.
+
+
+
+Continuous Integration Unit Testing Executable File Path:
+2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\bin\Release\net8.0\UnitTesting_ConsoleApp.exe
+
+Continuous Deployment Executable File Path:
+2-cicd-config\2-cd-deploystage\2-cd-deploymentscript\CD_Deployment\bin\Release\net8.0\CD_Deployment.exe
+
+Standalone Unit Testing Executable File Path:
+4-standalone-testscript\UnitTesting_ConsoleApp\bin\Release\net8.0\AOIUnitTesting_ConsoleApp.exe

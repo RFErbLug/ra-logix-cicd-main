@@ -1,0 +1,358 @@
+
+  =========================================================================================================
+==============================================================================================================
+             CI UNIT TESTING STAGE | 11/15/2024 4:45:12 AM (UTC-05:00) Eastern Time (US & Canada)             
+==============================================================================================================
+  ==========================================================================================================
+
+
+----------------------------------------------------------------------------------=[GITHUB & JENKINS INFO]=---
+Test initiated by:                      Allen Bradley
+Tester contact information:             exampleuser@rockwellautomation.com
+Git commit hash to be verified:         ac7cf7949621adf6bf52d0e2e4117b05ed0373b9
+Git commit message to be verified:      Removed tags disrupting logic in P00_ShowcaseDataTypes program.
+Jenkins job being executed:             RA-EXAMPLE-CI
+Jenkins job build number:               92
+----------------------------------------------------------------------------------------------=[.NET INFO]=---
+LDSDK .NET Core version:                8.0
+EchoSDK .NET Core version:              6.0
+-----------------------------------------------------------------------------------------=[UNIT TEST INFO]=---
+Unit test target object type:           Full Application (L5X)
+Input excel workbook file path:         C:\data\jenkins_home\workspace\RA-EXAMPLE-CI\2-cicd-config\1-ci-testst
+                                        age\3-ci-inputexcelworkbooks\FullApp_ExampleWithCICD_L85E.xlsx
+Output text report path:                C:\CI-Pipeline-Files\1-textreports\20241115044512_ExampleWithCICD_L85E
+                                        _UnitTestReport.txt
+Output excel report file path:          C:\CI-Pipeline-Files\2-excelreports\20241115044512_ExampleWithCICD_L85
+                                        E_UnitTestReport.xlsx
+File to be tested:                      C:\data\jenkins_home\workspace\RA-EXAMPLE-CI\1-production-files\L5Xs\E
+                                        xampleForCICD_L85E.L5X
+Retain generated ACD file:              True
+--------------------------------------------------------------------------------------=[STAGING UNIT TEST]=---
+[04:45:15] START converting L5X application file to ACD...
+   STATUS: Opened L5X application file 'C:\data\jenkins_home\workspace\RA-EXAMPLE-CI\1-production-files\L5Xs\E
+           xampleForCICD_L85E.L5X'.
+   STATUS: Converted L5X application project at 'C:\data\jenkins_home\workspace\RA-EXAMPLE-CI\1-production-fil
+           es\L5Xs\ExampleForCICD_L85E.L5X' to ACD file at 'C:\CI-Pipeline-Files\3-generatedfiles\202411150445
+           12_ExampleForCICD_L85E.ACD'.
+   STATUS: Opened ACD application file 'C:\CI-Pipeline-Files\3-generatedfiles\20241115044512_ExampleForCICD_L8
+           5E.ACD'.
+---
+[04:46:10] START setting up Factory Talk Logix Echo emulated controller...
+   STATUS: Project communication path specified is 'EmulateEthernet\127.0.0.1'.
+---
+[04:46:12] START changing controller to PROGRAM mode...
+   STATUS: SUCCESS changing controller to PROGRAM mode.
+---
+[04:46:12] START downloading ACD file...
+   STATUS: SUCCESS downloading ACD file.
+---
+[04:46:31] START changing controller to TEST mode...
+   STATUS: SUCCESS changing controller to TEST mode.
+---
+[04:46:32] START ExampleWithCICD_L85E unit testing...
+   STATUS: Done setting up & formatting output excel test report.
+   STATUS: "Safe State" test case #0 for ExampleWithCICD_L85E tags shown below:
+           Name: I_OR_1                  | Data Type: BOOL   | Usage: INPUT  |  Value: 0
+           Name: I_OR_2                  | Data Type: BOOL   | Usage: INPUT  |  Value: 0
+           Name: O_OR                    | Data Type: BOOL   | Usage: OUTPUT |  Value: 0
+           Name: I_AND_1                 | Data Type: BOOL   | Usage: INPUT  |  Value: 0
+           Name: I_AND_2                 | Data Type: BOOL   | Usage: INPUT  |  Value: 0
+           Name: O_AND                   | Data Type: BOOL   | Usage: OUTPUT |  Value: 0
+           Name: I_ToggleSINT_LocalTag   | Data Type: BOOL   | Usage: INPUT  |  Value: 0
+           Name: O_SINT_LocalTag         | Data Type: SINT   | Usage: OUTPUT |  Value: 0
+           Name: I_ToggleINT_LocalTag    | Data Type: BOOL   | Usage: INPUT  |  Value: 0
+           Name: O_INT_LocalTag          | Data Type: INT    | Usage: OUTPUT |  Value: 0
+           Name: I_ToggleDINT_LocalTag   | Data Type: BOOL   | Usage: INPUT  |  Value: 0
+           Name: O_DINT_LocalTag         | Data Type: DINT   | Usage: OUTPUT |  Value: 0
+           Name: I_ToggleLINT_LocalTag   | Data Type: BOOL   | Usage: INPUT  |  Value: 0
+           Name: O_LINT_LocalTag         | Data Type: LINT   | Usage: OUTPUT |  Value: 0
+           Name: I_ToggleREAL_LocalTag   | Data Type: BOOL   | Usage: INPUT  |  Value: 0
+           Name: O_REAL_LocalTag         | Data Type: REAL   | Usage: OUTPUT |  Value: 0
+           Name: I_ToggleSTRING_LocalTag | Data Type: BOOL   | Usage: INPUT  |  Value: 0
+           Name: O_STRING_LocalTag       | Data Type: STRING | Usage: OUTPUT |  Value: 0
+           Name: I_ToggleEnable_LocalTag | Data Type: BOOL   | Usage: INPUT  |  Value: 0
+           Name: AT_FaultType            | Data Type: DINT   | Usage: OUTPUT |  Value: 0
+           Name: AT_FaultCode            | Data Type: DINT   | Usage: OUTPUT |  Value: 0
+[04:46:35] START test case 1/20...
+   STATUS: Setting tags to "Safe State" test case #0.
+   STATUS: Setting input tags for test case 1/20.
+           I_OR_1                                                      0 -> 0
+           I_OR_2                                                      0 -> 0
+     PASS: O_OR expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultType expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultCode expected value '0' & actual value '0' EQUAL.
+   STATUS: Updated output excel test report with test case 1/20.
+[04:47:04] START test case 2/20...
+   STATUS: Setting tags to "Safe State" test case #0.
+   STATUS: Setting input tags for test case 2/20.
+           I_OR_1                                                      0 -> 1
+           I_OR_2                                                      0 -> 0
+     PASS: O_OR expected value '1' & actual value '1' EQUAL.
+     PASS: AT_FaultType expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultCode expected value '0' & actual value '0' EQUAL.
+   STATUS: Updated output excel test report with test case 2/20.
+[04:47:33] START test case 3/20...
+   STATUS: Setting tags to "Safe State" test case #0.
+   STATUS: Setting input tags for test case 3/20.
+           I_OR_1                                                      0 -> 0
+           I_OR_2                                                      0 -> 1
+     PASS: O_OR expected value '1' & actual value '1' EQUAL.
+     PASS: AT_FaultType expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultCode expected value '0' & actual value '0' EQUAL.
+   STATUS: Updated output excel test report with test case 3/20.
+[04:48:02] START test case 4/20...
+   STATUS: Setting tags to "Safe State" test case #0.
+   STATUS: Setting input tags for test case 4/20.
+           I_OR_1                                                      0 -> 1
+           I_OR_2                                                      0 -> 1
+     PASS: O_OR expected value '1' & actual value '1' EQUAL.
+     PASS: AT_FaultType expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultCode expected value '0' & actual value '0' EQUAL.
+   STATUS: Updated output excel test report with test case 4/20.
+[04:48:35] START test case 5/20...
+   STATUS: Setting tags to "Safe State" test case #0.
+   STATUS: Setting input tags for test case 5/20.
+           I_AND_1                                                     0 -> 0
+           I_AND_2                                                     0 -> 0
+     PASS: O_AND expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultType expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultCode expected value '0' & actual value '0' EQUAL.
+   STATUS: Updated output excel test report with test case 5/20.
+[04:50:55] START test case 6/20...
+   STATUS: Setting tags to "Safe State" test case #0.
+   STATUS: Setting input tags for test case 6/20.
+           I_AND_1                                                     0 -> 1
+           I_AND_2                                                     0 -> 0
+     PASS: O_AND expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultType expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultCode expected value '0' & actual value '0' EQUAL.
+   STATUS: Updated output excel test report with test case 6/20.
+[04:53:20] START test case 7/20...
+   STATUS: Setting tags to "Safe State" test case #0.
+   STATUS: Setting input tags for test case 7/20.
+           I_AND_1                                                     0 -> 0
+           I_AND_2                                                     0 -> 1
+     PASS: O_AND expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultType expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultCode expected value '0' & actual value '0' EQUAL.
+   STATUS: Updated output excel test report with test case 7/20.
+[04:55:49] START test case 8/20...
+   STATUS: Setting tags to "Safe State" test case #0.
+   STATUS: Setting input tags for test case 8/20.
+           I_AND_1                                                     0 -> 1
+           I_AND_2                                                     0 -> 1
+     PASS: O_AND expected value '1' & actual value '1' EQUAL.
+     PASS: AT_FaultType expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultCode expected value '0' & actual value '0' EQUAL.
+   STATUS: Updated output excel test report with test case 8/20.
+[04:56:54] START test case 9/20...
+   STATUS: Setting tags to "Safe State" test case #0.
+   STATUS: Setting input tags for test case 9/20.
+           I_ToggleSINT_LocalTag                                       0 -> 0
+           I_ToggleEnable_LocalTag                                     0 -> 1
+     PASS: O_SINT_LocalTag expected value '-128' & actual value '-128' EQUAL.
+     PASS: AT_FaultType expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultCode expected value '0' & actual value '0' EQUAL.
+   STATUS: Updated output excel test report with test case 9/20.
+[04:57:43] START test case 10/20...
+   STATUS: Setting tags to "Safe State" test case #0.
+   STATUS: Setting input tags for test case 10/20.
+           I_ToggleSINT_LocalTag                                       0 -> 1
+           I_ToggleEnable_LocalTag                                     0 -> 1
+     PASS: O_SINT_LocalTag expected value '127' & actual value '127' EQUAL.
+     PASS: AT_FaultType expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultCode expected value '0' & actual value '0' EQUAL.
+   STATUS: Updated output excel test report with test case 10/20.
+[04:58:48] START test case 11/20...
+   STATUS: Setting tags to "Safe State" test case #0.
+   STATUS: Setting input tags for test case 11/20.
+           I_ToggleINT_LocalTag                                        0 -> 0
+           I_ToggleEnable_LocalTag                                     0 -> 1
+     PASS: O_INT_LocalTag expected value '-32768' & actual value '-32768' EQUAL.
+     PASS: AT_FaultType expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultCode expected value '0' & actual value '0' EQUAL.
+   STATUS: Updated output excel test report with test case 11/20.
+[05:01:11] START test case 12/20...
+   STATUS: Setting tags to "Safe State" test case #0.
+   STATUS: Setting input tags for test case 12/20.
+           I_ToggleINT_LocalTag                                        0 -> 1
+           I_ToggleEnable_LocalTag                                     0 -> 1
+     PASS: O_INT_LocalTag expected value '32767' & actual value '32767' EQUAL.
+     PASS: AT_FaultType expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultCode expected value '0' & actual value '0' EQUAL.
+   STATUS: Updated output excel test report with test case 12/20.
+[05:02:58] START test case 13/20...
+   STATUS: Setting tags to "Safe State" test case #0.
+   STATUS: Setting input tags for test case 13/20.
+           I_ToggleDINT_LocalTag                                       0 -> 0
+           I_ToggleEnable_LocalTag                                     0 -> 1
+     PASS: O_DINT_LocalTag expected value '-2147483648' & actual value '-2147483648' EQUAL.
+     PASS: AT_FaultType expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultCode expected value '0' & actual value '0' EQUAL.
+   STATUS: Updated output excel test report with test case 13/20.
+[05:03:45] START test case 14/20...
+   STATUS: Setting tags to "Safe State" test case #0.
+   STATUS: Setting input tags for test case 14/20.
+           I_ToggleDINT_LocalTag                                       0 -> 1
+           I_ToggleEnable_LocalTag                                     0 -> 1
+     PASS: O_DINT_LocalTag expected value '2147483647' & actual value '2147483647' EQUAL.
+     PASS: AT_FaultType expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultCode expected value '0' & actual value '0' EQUAL.
+   STATUS: Updated output excel test report with test case 14/20.
+[05:04:34] START test case 15/20...
+   STATUS: Setting tags to "Safe State" test case #0.
+   STATUS: Setting input tags for test case 15/20.
+           I_ToggleLINT_LocalTag                                       0 -> 0
+           I_ToggleEnable_LocalTag                                     0 -> 1
+     PASS: O_LINT_LocalTag expected value '-9223372036854775808' & actual value '-9223372036854775808' EQUAL.
+     PASS: AT_FaultType expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultCode expected value '0' & actual value '0' EQUAL.
+   STATUS: Updated output excel test report with test case 15/20.
+[05:06:50] START test case 16/20...
+   STATUS: Setting tags to "Safe State" test case #0.
+   STATUS: Setting input tags for test case 16/20.
+           I_ToggleLINT_LocalTag                                       0 -> 1
+           I_ToggleEnable_LocalTag                                     0 -> 1
+     PASS: O_LINT_LocalTag expected value '9223372036854775807' & actual value '9223372036854775807' EQUAL.
+     PASS: AT_FaultType expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultCode expected value '0' & actual value '0' EQUAL.
+   STATUS: Updated output excel test report with test case 16/20.
+[05:08:54] START test case 17/20...
+   STATUS: Setting tags to "Safe State" test case #0.
+   STATUS: Setting input tags for test case 17/20.
+           I_ToggleREAL_LocalTag                                       0 -> 0
+           I_ToggleEnable_LocalTag                                     0 -> 1
+     PASS: O_REAL_LocalTag expected value '-1.7976931E-38' & actual value '-1.7976931E-38' EQUAL.
+     PASS: AT_FaultType expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultCode expected value '0' & actual value '0' EQUAL.
+   STATUS: Updated output excel test report with test case 17/20.
+[05:09:38] START test case 18/20...
+   STATUS: Setting tags to "Safe State" test case #0.
+   STATUS: Setting input tags for test case 18/20.
+           I_ToggleREAL_LocalTag                                       0 -> 1
+           I_ToggleEnable_LocalTag                                     0 -> 1
+     PASS: O_REAL_LocalTag expected value '3.402823E+38' & actual value '3.402823E+38' EQUAL.
+     PASS: AT_FaultType expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultCode expected value '0' & actual value '0' EQUAL.
+   STATUS: Updated output excel test report with test case 18/20.
+[05:10:28] START test case 19/20...
+   STATUS: Setting tags to "Safe State" test case #0.
+   STATUS: Setting input tags for test case 19/20.
+           I_ToggleSTRING_LocalTag                                     0 -> 0
+           I_ToggleEnable_LocalTag                                     0 -> 1
+     PASS: O_STRING_LocalTag expected value 'Good Bye!' & actual value 'Good Bye!' EQUAL.
+     PASS: AT_FaultType expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultCode expected value '0' & actual value '0' EQUAL.
+   STATUS: Updated output excel test report with test case 19/20.
+[05:12:08] START test case 20/20...
+   STATUS: Setting tags to "Safe State" test case #0.
+   STATUS: Setting input tags for test case 20/20.
+           I_ToggleSTRING_LocalTag                                     0 -> 1
+           I_ToggleEnable_LocalTag                                     0 -> 1
+     PASS: O_STRING_LocalTag expected value 'Hello World!' & actual value 'Hello World!' EQUAL.
+     PASS: AT_FaultType expected value '0' & actual value '0' EQUAL.
+     PASS: AT_FaultCode expected value '0' & actual value '0' EQUAL.
+   STATUS: Updated output excel test report with test case 20/20.
+[05:14:24] ExampleWithCICD_L85E Unit Test Final Result: PASS
+---
+[05:14:24] START retaining or deleting programmatically generated test components...
+   STATUS: Retained 'C:\CI-Pipeline-Files\3-generatedfiles\20241115044512_ExampleForCICD_L85E.ACD'.
+   STATUS: Retained folder 'C:\CI-Pipeline-Files\3-generatedfiles\'.
+   STATUS: Deleted Logix Echo chassis named 'FullAppUnitTest_Chassis'.
+---
+[05:14:24] Updated the report log excel file contents at 'C:\CI-Pipeline-Files\test-reports-log.xlsx'.
+---
+[05:14:24] Updated the report log text file contents in repo at 'C:\CI-Pipeline-Files\test-reports-log.txt'.
+---
+[05:14:24] Full application unit testing for 'ExampleWithCICD_L85E' completed in 00:29:12 (HH:mm:ss).
+---------------------------------------------------------------------------------------=[ENDING UNIT TEST]=---
+[05:14:24] START file management...
+   STATUS: Set to retain '20' text reports at 'C:\CI-Pipeline-Files\1-textreports'
+           Retained '20241115044512_UnitTestReport.txt'
+           Retained '20241115044209_DelayedSum_UnitTestReport.txt'
+           Retained '20241115043841_UnitTestReport.txt'
+           Retained '20241115043122_UnitTestReport.txt'
+           Retained '20241115040952_DelayedSum_UnitTestReport.txt'
+           Retained '20241115040708_DelayedSum_UnitTestReport.txt'
+           Retained '20241115040152_UnitTestReport.txt'
+           Retained '20241115034959_ExampleWithCICD_L85E_UnitTestReport.txt'
+           Retained '20241115034825_DelayedSum_UnitTestReport.txt'
+           Retained '20241115024745_ExampleWithCICD_L85E_UnitTestReport.txt'
+           Retained '20241115024623_DelayedSum_UnitTestReport.txt'
+           Retained '20241115021747_ExampleWithCICD_L85E_UnitTestReport.txt'
+           Retained '20241115021624_DelayedSum_UnitTestReport.txt'
+           Retained '20241115015501_ExampleWithCICD_L85E_UnitTestReport.txt'
+           Retained '20241115015329_DelayedSum_UnitTestReport.txt'
+           Retained '20241115012654_ExampleWithCICD_L85E_UnitTestReport.txt'
+           Retained '20241115012528_DelayedSum_UnitTestReport.txt'
+           Retained '20241115011447_ExampleWithCICD_L85E_UnitTestReport.txt'
+           Retained '20241115011321_DelayedSum_UnitTestReport.txt'
+           Retained '20241115010750_ExampleWithCICD_L85E_UnitTestReport.txt'
+           Deleted '20241115010625_DelayedSum_UnitTestReport.txt'
+   STATUS: Set to retain '20' excel reports at 'C:\CI-Pipeline-Files\2-excelreports'
+           Retained '20241115044512_ExampleWithCICD_L85E_UnitTestReport.xlsx'
+           Retained '20241115044209_DelayedSum_UnitTestReport.xlsx'
+           Retained '20241115043841_DelayedSum_UnitTestReport.xlsx'
+           Retained '20241115043122_DelayedSum_UnitTestReport.xlsx'
+           Retained '20241115040952_DelayedSum_UnitTestReport.xlsx'
+           Retained '20241115040708_DelayedSum_UnitTestReport.xlsx'
+           Retained '20241115040152_DelayedSum_UnitTestReport.xlsx'
+           Retained '20241115034959_ExampleWithCICD_L85E_UnitTestReport.xlsx'
+           Retained '20241115034825_DelayedSum_UnitTestReport.xlsx'
+           Retained '20241115024745_ExampleWithCICD_L85E_UnitTestReport.xlsx'
+           Retained '20241115024623_DelayedSum_UnitTestReport.xlsx'
+           Retained '20241115021747_ExampleWithCICD_L85E_UnitTestReport.xlsx'
+           Retained '20241115021624_DelayedSum_UnitTestReport.xlsx'
+           Retained '20241115015501_ExampleWithCICD_L85E_UnitTestReport.xlsx'
+           Retained '20241115015329_DelayedSum_UnitTestReport.xlsx'
+           Retained '20241115012654_ExampleWithCICD_L85E_UnitTestReport.xlsx'
+           Retained '20241115012528_DelayedSum_UnitTestReport.xlsx'
+           Retained '20241115011447_ExampleWithCICD_L85E_UnitTestReport.xlsx'
+           Retained '20241115011321_DelayedSum_UnitTestReport.xlsx'
+           Retained '20241115010750_ExampleWithCICD_L85E_UnitTestReport.xlsx'
+           Deleted '20241115010625_DelayedSum_UnitTestReport.xlsx'
+   STATUS: Set to retain '20' L5X files at 'C:\CI-Pipeline-Files\3-generatedfiles'
+           Retained '20241115043841_DelayedSum_FullProj.L5X'
+           Retained '20241115043841_DelayedSum_AOIRoutine.L5X'
+           Retained '20241115043841_DelayedSum_Basic.L5X'
+           Retained '20241115043122_DelayedSum_FullProj.L5X'
+           Retained '20241115043122_DelayedSum_AOIRoutine.L5X'
+           Retained '20241115043122_DelayedSum_Basic.L5X'
+           Retained '20241114211939_ExampleForCICD_L85E.L5X'
+           Retained '20241114202028_ExampleForCICD_L85E.L5X'
+           Retained '20241114201329_ExampleForCICD_L85E.L5X'
+           Retained '20241114194247_ExampleForCICD_L85E.L5X'
+           Retained '20241114193421_ExampleForCICD_L85E.L5X'
+           Retained '20241113164152_ExampleForCICD_L85E.L5X'
+           Retained '20241112235503_ExampleWithCICD_L85E.L5X'
+           Retained '20241112234949_ExampleWithCICD_L85E.L5X'
+           Retained '20241112234535_ExampleWithCICD_L85E.L5X'
+           Retained '20241112234255_ExampleWithCICD_L85E.L5X'
+           Retained '20241112234025_ExampleWithCICD_L85E.L5X'
+           Retained '20241112232538_ExampleWithCICD_L85E.L5X'
+           Retained '20241112232159_ExampleWithCICD_L85E.L5X'
+           Retained '20241112224146_ExampleWithCICD_L85E.L5X'
+   STATUS: Set to retain '20' ACD files at 'C:\CI-Pipeline-Files\3-generatedfiles'
+           Retained '20241115044512_ExampleForCICD_L85E.ACD'
+           Retained '20241115044209_DelayedSum_WithAOI.ACD'
+           Retained '20241115043841_DelayedSum_WithAOI.ACD'
+           Retained '20241115043122_DelayedSum_WithAOI.ACD'
+           Retained '20241115040952_DelayedSum_WithAOI.ACD'
+           Retained '20241115040708_DelayedSum_WithAOI.ACD'
+           Retained '20241115040152_DelayedSum_WithAOI.ACD'
+           Retained '20241115034959_ExampleForCICD_L85E.ACD'
+           Retained '20241115034825_DelayedSum_WithAOI.ACD'
+           Retained '20241115024745_ExampleForCICD_L85E.ACD'
+           Retained '20241115024623_DelayedSum_WithAOI.ACD'
+           Retained '20241115021747_ExampleForCICD_L85E.ACD'
+           Retained '20241115021624_DelayedSum_WithAOI.ACD'
+           Retained '20241115015501_ExampleForCICD_L85E.ACD'
+           Retained '20241115015329_DelayedSum_WithAOI.ACD'
+           Retained '20241115012654_ExampleForCICD_L85E.ACD'
+           Retained '20241115012528_DelayedSum_WithAOI.ACD'
+           Retained '20241115011447_ExampleForCICD_L85E.ACD'
+           Retained '20241115011321_DelayedSum_WithAOI.ACD'
+           Retained '20241115010750_ExampleForCICD_L85E.ACD'
+           Deleted '20241115010625_DelayedSum_WithAOI.ACD'
+   STATUS: Set to retain '0' BAK files at 'C:\CI-Pipeline-Files\3-generatedfiles'
+---------------------------------------------------------------------------=[UNIT TEST FINAL RESULT: PASS]=---

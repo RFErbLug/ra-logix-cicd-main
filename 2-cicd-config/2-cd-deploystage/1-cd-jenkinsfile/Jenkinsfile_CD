@@ -1,0 +1,58 @@
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------
+//
+// FileName:     Jenkinsfile_CD
+// FileType:     Text File using Declarative Pipeline syntax (based on Groovy programming language) 
+// Author:       Rockwell Automation Engineering
+// Created:      2024
+// Description:  This script executes the example continuous deployment pipeline for a CI/CD system used for Studio 5000 Logix Designer application development.
+//
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+pipeline {
+    agent any // Uses any available agent (node).
+
+    triggers { 
+        pollSCM('* * * * *') // Poll every 1 minute.  Change this polling frequency based on system performance & CI/CD system needs.
+    }
+
+    // Define environmental variables here.
+    environment {
+        PATH_JENKINS_GITHUB = "C:\\data\\jenkins_home\\workspace\\${env.JOB_NAME}\\"
+        PATH_GEN_FILES = "C:\\CD-Pipeline-Files\\"
+    }
+
+    stages {
+        // DEPLOY STAGE: This stage runs the CD_Deployment C# solution created using the EchoSDK & LDSDK. The script downloads the verified ACDs to
+        //               controllers specified within the input excel workbook stored in the GitHub repository at the file path below.
+        //               (.\2-cicd-config\2-cd-deploystage\3-cd-inputexcelworkbooks\DeployToControllersWorkbook.xlsx)
+        stage('Deploy') {
+            steps {
+                script {
+                    createBanner('STAGE: Deploy')
+
+                    def executable_filePath = "${env.PATH_JENKINS_GITHUB}2-cicd-config\\2-cd-deploystage\\2-cd-deploymentscript\\CD_Deployment\\bin\\Release\\" +
+                        "net8.0\\CD_Deployment.exe"
+                    
+                    bat(
+                        script: "@${executable_filePath} ${env.PATH_JENKINS_GITHUB} ${env.PATH_GEN_FILES}"
+                    )
+                }
+            }
+        }
+        // CLEAN WORKSPACE STAGE: This stage deletes the contents of the locally cloned repository at PATH_JENKINS_GITHUB.
+        stage ('Clean Workspace') {
+            steps {
+                createBanner('STAGE: Clean Workspace')
+                cleanWs()
+            }
+        }
+    }
+}
+
+// Function to create a banner to help distinguish between different regions of the Jenkins 'Console Output'.
+def createBanner(bannerName) {
+    script {
+        def finalBanner = '-=[' + bannerName + ']=-'
+        echo finalBanner.padRight(180, '-')
+    }
+}

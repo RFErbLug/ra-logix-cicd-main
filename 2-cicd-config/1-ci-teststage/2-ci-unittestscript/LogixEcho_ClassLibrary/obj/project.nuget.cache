@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "dgSpecHash": "h5SwDJPZL+M=",
+  "success": false,
+  "projectFilePath": "C:\\Users\\DevOps\\Desktop\\ra-logix-cicd-main\\ra-logix-cicd-main\\2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\LogixEcho_ClassLibrary\\LogixEcho_ClassLibrary.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\DevOps\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.36\\microsoft.netcore.app.ref.6.0.36.nupkg.sha512",
+    "C:\\Users\\DevOps\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.36\\microsoft.windowsdesktop.app.ref.6.0.36.nupkg.sha512",
+    "C:\\Users\\DevOps\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.36\\microsoft.aspnetcore.app.ref.6.0.36.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1101",
+      "level": "Error",
+      "message": "Unable to find package RockwellAutomation.FactoryTalkLogixEcho.Api.Client. No packages exist with this id in source(s): nuget.org, Studio5000SDK",
+      "libraryId": "RockwellAutomation.FactoryTalkLogixEcho.Api.Client",
+      "targetGraphs": [
+        "net6.0"
+      ]
+    }
+  ]
+}

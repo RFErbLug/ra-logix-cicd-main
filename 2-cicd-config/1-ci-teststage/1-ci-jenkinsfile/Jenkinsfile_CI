@@ -1,0 +1,164 @@
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------
+//
+// FileName:     Jenkinsfile_CI
+// FileType:     Text File using Declarative Pipeline syntax (based on Groovy programming language) 
+// Author:       Rockwell Automation Engineering
+// Created:      2024
+// Description:  This script executes the example continuous integration pipeline for a CI/CD system used for Studio 5000 Logix Designer application development.
+//
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+pipeline {
+    agent any // Uses any available agent (node).
+
+    triggers { 
+        pollSCM('* * * * *') // Poll every 1 minute. Change this polling frequency based on system performance & CI/CD system needs.
+    }
+    
+    // Define environmental variables here.
+    environment {
+        PATH_JENKINS_GITHUB = "C:\\data\\jenkins_home\\workspace\\${env.JOB_NAME}\\"
+        PATH_GEN_FILES_AND_REPORTS = "C:\\CI-Pipeline-Files\\"
+        GITHUB_DEV_BRANCH = 'develop/datatype-bounds'
+        GITHUB_RELEASE_BRANCH = 'release/v1.0.0'
+        FINAL_TEST_RESULT = "PASS"
+        GITHUB_USER_EMAIL = powershell(script: "git log -1 --pretty=format:'%ae'", returnStdout: true).trim()
+        GITHUB_USER_NAME = powershell(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
+        GITHUB_COMMIT_HASH = powershell(script: "git log -1 --pretty=format:'%H'", returnStdout: true).trim()
+        GITHUB_COMMIT_MSG = powershell(script: "git log -1 --pretty=format:'%s'", returnStdout: true).trim()
+    }
+
+    stages {
+        // TEST STAGE: This stage runs the CI_Deployment C# solution created using the EchoSDK & LDSDK. The script executes unit testing on some target 
+        //             component (full application ACD or Add-On Definition L5X) using test cases established in excel workbooks stored at the below location.
+        //             (.\2-cicd-config\1-ci-teststage\3-ci-inputexcelworkbooks\)
+        stage('Test') {
+            steps {
+                createBanner('STAGE: Test')
+                script {
+                    def inputExcelWorkbooksFolderPath = "${env.PATH_JENKINS_GITHUB}2-cicd-config\\1-ci-teststage\\3-ci-inputexcelworkbooks"
+                    def executable_filePath = "${env.PATH_JENKINS_GITHUB}2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\UnitTesting_ConsoleApp\\bin\\" +
+                        "Release\\net8.0\\UnitTesting_ConsoleApp.exe"
+
+                    // Get all file names in the specified folder
+                    def excelFileNames = powershell(
+                        script: "Get-ChildItem -Path ${inputExcelWorkbooksFolderPath} -Filter *.xlsx | Select-Object -ExpandProperty Name",
+                        returnStdout: true
+                    ).trim().split('\n')
+
+                    // Loop through each excel workbook file name and execute the test script for each workbook. 
+                    excelFileNames.each { fileName ->
+                        bat(script: "@${executable_filePath} ${env.PATH_JENKINS_GITHUB} ${fileName.trim()} \"${env.GITHUB_USER_NAME}\" ${env.GITHUB_USER_EMAIL} " +
+                            "\"${env.GITHUB_COMMIT_MSG}\" ${env.GITHUB_COMMIT_HASH} ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.PATH_GEN_FILES_AND_REPORTS}")
+
+                        // Get the phrase "PASS" or "FAIL" from the final banner displayed in the text report.
+                        testFinalResult = trimFinalTextReportBanner("${env.PATH_GEN_FILES_AND_REPORTS}1-textreports")
+
+                        // Assign the test results value directly to FINAL_TEST_RESULT environment variable.
+                        if (testFinalResult == "FAIL") {
+                            FINAL_TEST_RESULT = testFinalResult
+                        }
+                    }
+                }
+            }
+        }
+        // RELEASE STAGE: This stage, if all prior tests passed testing, creates a new branch using the commit that passed testing. A pull request is then
+        //                created that merges the new branch into the release branch.
+        stage('Release') {
+            steps {
+                createBanner('STAGE: Release')
+                script {
+                    echo "Creating new branch for ${FINAL_TEST_RESULT}ED contents and opening pull request into ${env.GITHUB_RELEASE_BRANCH}."
+
+                    if (FINAL_TEST_RESULT == 'PASS') {
+                        // Create the contents of the pr body message based on the results of testing.
+                        def pr_messagecontents = "${env.GITHUB_USER_NAME} contributions from commit hash ${env.GIT_COMMIT} PASSED testing. Merge release/pending-" +
+                            "pr-${env.BUILD_NUMBER} into ${env.GITHUB_RELEASE_BRANCH}. The release/pending-pr-${env.BUILD_NUMBER} branch can be safely deleted" + 
+                            " once merged."
+
+                        bat """
+                            setlocal
+
+                            :: Set the local user info for the Jenkins job agent to the commiter's info.
+                            cd ${env.PATH_JENKINS_GITHUB}
+                            git config --global --replace-all user.email ${env.GITHUB_USER_EMAIL}
+                            git config --global --replace-all user.name ${env.GITHUB_USER_NAME}
+
+                            :: Fetch all branches 
+                            git fetch --all 
+
+                            :: Check if the release/pending-pr-${env.BUILD_NUMBER} branch exists
+                            git show-ref --verify --quiet refs/heads/release/pending-pr-${env.BUILD_NUMBER}
+                            if %errorlevel% neq 0 ( 
+                                echo Branch 'release/pending-pr-${env.BUILD_NUMBER}' does not exist. Creating it. 
+                                git checkout -b release/pending-pr-${env.BUILD_NUMBER}
+                            ) else ( 
+                                echo Branch 'release/pending-pr-${env.BUILD_NUMBER}' exists. Checking it out. 
+                                git checkout release/pending-pr-${env.BUILD_NUMBER} 
+                                git merge origin/${env.GITHUB_DEV_BRANCH}
+                            ) 
+                            
+                            :: Push changes to the remote repository 
+                            git push origin release/pending-pr-${env.BUILD_NUMBER}
+
+                            git add .
+                            git commit -m \"${FINAL_TEST_RESULT}ED CI TESTING | Jenkins job: ${env.JOB_NAME} | Jenkins build #: ${env.BUILD_NUMBER}\"
+                            git push --set-upstream origin release/pending-pr-${env.BUILD_NUMBER}
+
+                            endlocal
+                            """
+
+                            def prCommand = 'gh pr create --title "' + "${FINAL_TEST_RESULT}ED CI TESTING | Jenkins job: ${env.JOB_NAME} | Jenkins build #: " + 
+                                            "${env.BUILD_NUMBER}\" " + '--body "' + "${pr_messagecontents}\" " + '--base ' + "${env.GITHUB_RELEASE_BRANCH} " + 
+                                            '--head ' + "release/pending-pr-${env.BUILD_NUMBER}" 
+                            bat prCommand
+                    }
+                    if (FINAL_TEST_RESULT == 'FAIL') {
+                        echo "CI Testing FAILURE: ${env.GITHUB_USER_NAME} contributions from commit hash ${env.GIT_COMMIT} did not pass CI testing. Check the " +
+                            "${PATH_GEN_FILES_AND_REPORTS} folder for the generated test reports. ${env.GITHUB_USER_NAME} needs to return to Studio 5000 Logix " +
+                            "Designer, correct their changes, and make another commit to the ${env.GITHUB_DEV_BRANCH} branch."
+                        echo "If email notifications to indicate CI pipeling testing results and pipeline completion are desired, configure the email " +
+                            "programmatically at this location of the Jenkinsfile_CI script."
+                    }
+                }
+            }
+        }
+        // CLEAN WORKSPACE STAGE: This stage deletes the contents of the locally cloned repository at PATH_JENKINS_GITHUB.
+        stage ('Clean Workspace') {
+            steps {
+                createBanner('STAGE: Clean Workspace')
+                cleanWs()
+            }
+        }
+    }
+}
+
+// Function to create a banner to help distinguish between different regions of the Jenkins 'Console Output'.
+def createBanner(bannerName) {
+    script {
+        def finalBanner = '-=[' + bannerName + ']=-'
+        echo finalBanner.padRight(160, '-')
+    }
+}
+
+// Function to get just the final result, PASS or FAIL, of a generated text file report.
+def trimFinalTextReportBanner(folderPath) {
+    def fileList = bat(script: "dir /b /o:-d ${folderPath}", returnStdout: true).trim().split('\r\n')
+    if (fileList.size() > 0) {
+        def mostRecentFilePath = "${folderPath}\\${fileList[1]}"
+
+        // Get file contents
+        def fileContents = readFile(mostRecentFilePath).trim()
+
+        // Get the last 9 characters of the string
+        def lastNineChars = fileContents[-9..-1]
+        
+        // Remove the ']', '=', and '-' characters
+        def result = lastNineChars.replaceAll("[\\]=-]", "")
+        
+        return result
+    } else {
+        echo "No text files found in the folder: ${folderPath}"
+        return "ERROR: no file found."
+    }
+}

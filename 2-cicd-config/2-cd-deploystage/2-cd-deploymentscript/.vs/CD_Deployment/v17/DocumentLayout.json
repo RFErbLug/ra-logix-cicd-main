@@ -1,0 +1,67 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\ASYost\\Desktop\\RA_CICD_FINAL\\ra-cicd-test6\\2-cicd-config\\2-cd-deploystage\\2-cd-deploymentscript\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{FBA13A7D-5C92-466A-B1BC-31E9A7FC355F}|CD_Deployment\\CD_Deployment.csproj|c:\\users\\asyost\\desktop\\ra_cicd_final\\ra-cicd-test6\\2-cicd-config\\2-cd-deploystage\\2-cd-deploymentscript\\cd_deployment\\deploymentprogram.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FBA13A7D-5C92-466A-B1BC-31E9A7FC355F}|CD_Deployment\\CD_Deployment.csproj|solutionrelative:cd_deployment\\deploymentprogram.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FBA13A7D-5C92-466A-B1BC-31E9A7FC355F}|CD_Deployment\\CD_Deployment.csproj|c:\\users\\asyost\\desktop\\ra_cicd_final\\ra-cicd-test6\\2-cicd-config\\2-cd-deploystage\\2-cd-deploymentscript\\cd_deployment\\cd_deployment.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
+      "RelativeMoniker": "D:0:0:{FBA13A7D-5C92-466A-B1BC-31E9A7FC355F}|CD_Deployment\\CD_Deployment.csproj|solutionrelative:cd_deployment\\cd_deployment.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CD_Deployment",
+              "DocumentMoniker": "C:\\Users\\ASYost\\Desktop\\RA_CICD_FINAL\\ra-cicd-test6\\2-cicd-config\\2-cd-deploystage\\2-cd-deploymentscript\\CD_Deployment\\CD_Deployment.csproj",
+              "RelativeDocumentMoniker": "CD_Deployment\\CD_Deployment.csproj",
+              "ToolTip": "C:\\Users\\ASYost\\Desktop\\RA_CICD_FINAL\\ra-cicd-test6\\2-cicd-config\\2-cd-deploystage\\2-cd-deploymentscript\\CD_Deployment\\CD_Deployment.csproj",
+              "RelativeToolTip": "CD_Deployment\\CD_Deployment.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2024-11-13T16:28:35.199Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "DeploymentProgram.cs",
+              "DocumentMoniker": "C:\\Users\\ASYost\\Desktop\\RA_CICD_FINAL\\ra-cicd-test6\\2-cicd-config\\2-cd-deploystage\\2-cd-deploymentscript\\CD_Deployment\\DeploymentProgram.cs",
+              "RelativeDocumentMoniker": "CD_Deployment\\DeploymentProgram.cs",
+              "ToolTip": "C:\\Users\\ASYost\\Desktop\\RA_CICD_FINAL\\ra-cicd-test6\\2-cicd-config\\2-cd-deploystage\\2-cd-deploymentscript\\CD_Deployment\\DeploymentProgram.cs",
+              "RelativeToolTip": "CD_Deployment\\DeploymentProgram.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAApwD4AAABVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-30T19:03:14.249Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedWidth": 653,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+--------------------------------------------------------------
+-                                                            -
+-            CI/CD for Logix Control Systems                 -
+-                   Workflow Example                         -
+-                                                            -
+--------------------------------------------------------------
+
+To understand the CI/CD example system in this repository, let’s walk through each step of the CI/CD development process together.
+
+Note that in this proposed CI/CD system, the below two roles have the following manual steps:
+Senior engineer:      Checks off on development engineer's work, approving merges. Has to manaully merge the pull requests from dev to release branches.
+                      Once ready, can merge release to main in order to trigger the continuous deployment pipeline. (Responsible for steps 14 & 15.)
+Development engineer: The only manual steps this role should take is the development of Studio 5000 Logix Designer application code
+                      and making the git commits to kick of the continuous integration pipeline. (Responsbile for steps 3 to 8.)
+
+Step 1:	 Fork this repo at https://github.com/RockwellAutomation/ra-cicd-example.git.
+Step 2:  Create a feature branch called 'develop/datatype-bounds' and a release branch called 'release/v1.0.0', both from the 'main' branch.
+Step 3:	 Clone the new forked repo to local instance using the below command in a command prompt:
+         'git clone <insert your repo link here>'
+Step 4:	 Checkout develop/datatype-bounds branch using the below command in a command prompt:
+         'git checkout develop/datatype-bounds'
+Step 5:  This step is redundant at the moment but will be useful to establish a workflow in future steps. Run the below command to update the local repository 
+         with the remote repository:
+         'git pull'
+Step 6:	 Let’s develop an application in Studio 5000® Logix. Using the File Explorer, open the L5X file at 
+         “<your_local_repo_filepath>\1-PRODUCTION-files\L5Xs\ExampleWithCICD_L85E.L5X”. 
+         Note that you will be prompted to open the file as an ACD. Click through and open the ACD project at some local instance of your development environment. 
+Step 7:	 Familiarize yourself with the project. Then, change some component of the project logic. 
+         This change will be tested in the upcoming steps.
+Step 8:	 'Save As' the project as an L5X file, saving the file with the same name at the “<your_local_repo_filepath>\1-PRODUCTION-files\L5Xs\" folder.
+         Note that you will have to overwrite the existing file. That is ok.
+Step 9:	 Let’s make a git commit. Note that every team has different commenting conventions. There are no definitive rules but consistency across the 
+         team is a good rule of thumb. Run the following three commands one after another from the command prompt:
+         'git add .'
+         'git commit -m “Make first commit!”'  
+         'git push origin develop/datatype-bounds'
+Step 10: Note that the now updated develop/datatype-bounds branch triggers the RA-EXAMPLE-CI pipeline in Jenkins. Open Jenkins by navigating to your browser 
+         and search 'http://localhost:8080/' in the search bar. This should pull up the Jenkins login screen.
+Step 11: Sign into Jenkins.
+Step 12: Click into the RA-EXAMPLE-CI pipeline. Navigate to the settings and update the two instances with your forked repositorie's git url.
+         For its first execution, you may need to manually run the Jenkins pipeline. If the RA-EXAMPLE-CI pipeline hasn't started yet, click 'Build Now'.
+Step 13: To watch the RA-EXAMPLE-CI pipeline execute, click the button to the direct left of the build # under the 'Build History' panel on the left side of 
+         the screen. Note the various stages of the Jenkins pipeline and the console outputs from the test scripts. (If running into issues here, navigate to 
+         the troubleshooting section below.)
+Step 14: If the CI pipeline did not pass all unit tests, note the console outputs specifying the location where email notifications could be configured to notify 
+         engineers of a test failure. Then, return to Step 6 and follow each step back to this one to correct the change made to the project that is flagging one 
+         of the test cases. If this had been a manufacturing enviornment, note that the CI testing just caught a mistake that could have cost time and money!
+         If the CI pipeline passes all tests, you should see that a pull request has been programmatically created in your forked repository.
+Step 15: Navigate to your web broswer and open up your remote GitHub repository. Click the 'Pull requests' tab at the top of the screen, click into the newly 
+         opened pull request, and click 'Merge pull request'. Then click 'Merge'. Then Delete the release/pending-pr-## branch.
+         We've now updated the release/v1.0.0 branch. If you would like to keep testing the CI pipeline, navigate back to Step 5 and keep making application 
+         modifications until ready to continue.
+Step 16: Navigate to your web broswer and open up your remote GitHub repository. Click the 'Pull requests' tab at the top of the screen, and click 
+         'New pull request'. Merge the release/v1.0.0 into the main branch to trigger the RA-EXAMPLE-CD pipeline.
+Step 17: Navigate back to Jenkins and open the RA-EXAMPLE-CD pipeline. For its first execution, you may need to manually run the Jenkins pipeline; if the 
+         RA-EXAMPLE-CD pipeline hadn't started yet, click 'Build Now'. Note the various stages of the Jenkins pipeline and the console outputs from the test 
+         scripts. (If running into issues here, navigate to the troubleshooting section below.)
+
+Congradulations! You’ve completed a basic CI/CD workflow to develop a Studio 5000 Logix Designer application!
+
+
+Troubleshooting | Misc Suggestions
+-   If looking to test using a Jenkins user run command prompt, run the below command:
+    'runas /user:Jenkins cmd' or 'runas /user:Jenkins powershell'
+-   If the GitHub client needs to be installed, run the below two commands one by one in a Jenkins command prompt/powershell:
+    'winget install --id GitHub.cli'
+    'gh auth login'
+-   If running into GitHub permissions issues, check to see if your repository is private. If so, establish proper connections using your personal acces token.
+    Try executing the below command if you have a personal acces token:
+    git remote set-url origin "https://<insert_github_username>:<insert_github_pers_acc_token>@github.com/<insert_github_username/<insert_github_repo_name>.git"
+-   If running into a 'schannel: failed to receive handshake, SSL/TLS connection failed' error, try running the below command:
+    'git config --global http.sslBackend schannel'
+-   Note that if trying to make a git commit, Studio 5000 Logix Designer (and Microsoft Visual Studio Community 2022 if developing a C# script) must be closed.
+
+
+Limitations | The unit test scripts only suport:
+-   Only Add-On Instruction definition L5X & Full Application L5X files are valid unit test target objects.
+-   Only atomic data types BOOL, SINT, INT, DINT, LINT, REAL, and STRING are currently supported.
+-   Add-On Instruction definition testing excludes InOut parameters.
+-   Can’t change the order in which input tag/parameters are set; all input values are set from top to bottom in the order they were provided in the input excel worksheet.
+-   Full application testing does not support time-based testing unless it is built into the logic of a controller (no clock cycle).

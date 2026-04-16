@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AOI_UnitTesting": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Users\\ASYost\\Desktop\\RA_CICD_FINAL\\ra-cicd-test6\\ AOI_DelayedSum_Simple.xlsx \"andre yost\" andre.yost@gmail.com \"commit message!\" 428u098903825093 RA-CI-Jenkinsjob 345 C:\\CI-Pipeline-Files\\"
+    }
+  }
+}
