@@ -17,7 +17,7 @@ pipeline {
     
     // Define environmental variables here.
     environment {
-        PATH_JENKINS_GITHUB = "C:\\data\\jenkins_home\\workspace\\${env.JOB_NAME}\\"
+        PATH_JENKINS_GITHUB = "${env.WORKSPACE}\\"
         PATH_GEN_FILES_AND_REPORTS = "C:\\CI-Pipeline-Files\\"
         GITHUB_DEV_BRANCH = 'develop/datatype-bounds'
         GITHUB_RELEASE_BRANCH = 'release/v1.0.0'
