@@ -48,8 +48,15 @@ pipeline {
 
                     // Loop through each excel workbook file name and execute the test script for each workbook. 
                     excelFileNames.each { fileName ->
-                        bat(script: "@${executable_filePath} ${env.PATH_JENKINS_GITHUB} ${fileName.trim()} \"${env.GITHUB_USER_NAME}\" ${env.GITHUB_USER_EMAIL} " +
-                            "\"${env.GITHUB_COMMIT_MSG}\" ${env.GITHUB_COMMIT_HASH} ${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.PATH_GEN_FILES_AND_REPORTS}")
+                        bat """
+echo RUNNING: ${executable_filePath}
+
+dir ${env.PATH_JENKINS_GITHUB}2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\UnitTesting_ConsoleApp\\bin\\Release\\net8.0\\
+
+type ${env.PATH_JENKINS_GITHUB}2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\UnitTesting_ConsoleApp\\UnitTestProgram.cs
+
+${executable_filePath}
+"""
 
                         // Get the phrase "PASS" or "FAIL" from the final banner displayed in the text report.
                         testFinalResult = trimFinalTextReportBanner("${env.PATH_GEN_FILES_AND_REPORTS}1-textreports")
