@@ -5,10 +5,6 @@ pipeline {
         pollSCM('* * * * *')
     }
 
-    environment {
-        WORKSPACE_PATH = "${env.WORKSPACE}"
-    }
-
     stages {
 
         stage('Test') {
@@ -16,15 +12,24 @@ pipeline {
                 script {
                     echo "=== CLEAN CI TEST START ==="
 
-                    // Build project
                     powershell """
 cd ${env.WORKSPACE}\\2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\UnitTesting_ConsoleApp
 
+echo Adding Rockwell SDK NuGet source...
+dotnet nuget add source "C:\\Program Files (x86)\\Rockwell Automation SDKs" -n RockwellSDK || echo Source may already exist
+
+echo Restoring packages...
+dotnet restore
+
+echo Cleaning...
 dotnet clean
+
+echo Building...
 dotnet build -c Release
 """
 
-                    // Run executable
+                    echo "Running executable..."
+
                     bat """
 ${env.WORKSPACE}\\2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\UnitTesting_ConsoleApp\\bin\\Release\\net8.0\\UnitTesting_ConsoleApp.exe
 """
