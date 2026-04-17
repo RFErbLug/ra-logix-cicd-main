@@ -2,7 +2,7 @@
 
 namespace UnitTesting_ConsoleApp
 {
-    class Program
+    class StartUnitTest
     {
         static int Main(string[] args)
         {
