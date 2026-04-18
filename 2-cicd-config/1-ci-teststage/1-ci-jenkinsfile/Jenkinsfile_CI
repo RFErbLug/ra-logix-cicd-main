@@ -16,7 +16,11 @@ pipeline {
 cd ${env.WORKSPACE}\\2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\UnitTesting_ConsoleApp
 
 echo Adding Rockwell SDK NuGet source...
-dotnet nuget add source "C:\\Program Files (x86)\\Rockwell Automation SDKs" -n RockwellSDK || echo Source may already exist
+try {
+    dotnet nuget add source "C:\\Program Files (x86)\\Rockwell Automation SDKs" -n RockwellSDK
+} catch {
+    Write-Host "NuGet source may already exist"
+}
 
 echo Restoring packages...
 dotnet restore
