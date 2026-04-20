@@ -13,22 +13,16 @@ pipeline {
                     echo "=== CLEAN CI TEST START ==="
 
                     powershell """
-cd ${env.WORKSPACE}\\2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\UnitTesting_ConsoleApp
+Write-Host "=== FIXING NUGET SOURCE ==="
 
-echo Adding Rockwell SDK NuGet source...
-try {
-    dotnet nuget add source "C:\\Program Files (x86)\\Rockwell Automation SDKs" -n RockwellSDK
-} catch {
-    Write-Host "NuGet source may already exist"
-}
+dotnet nuget remove source RockwellSDK 2>$null
 
-echo Restoring packages...
-dotnet restore
+dotnet nuget add source "C:\\Program Files (x86)\\Rockwell Automation SDKs" -n RockwellSDK
 
-echo Cleaning...
-dotnet clean
+Write-Host "=== RESTORE (DETAILED) ==="
+dotnet restore -v detailed
 
-echo Building...
+Write-Host "=== BUILD ==="
 dotnet build -c Release
 """
 
