@@ -13,27 +13,29 @@ pipeline {
                     echo "=== CLEAN CI TEST START ==="
 
                     powershell '''
-Write-Host "=== FIXING NUGET SOURCE ==="
+$nugetConfig = "$env.WORKSPACE\\nuget.config"
 
-try {
-    dotnet nuget remove source RockwellSDK
-} catch {
-    Write-Host "NuGet source not present (ok)"
-}
+Write-Host "=== CREATE LOCAL NUGET CONFIG ==="
 
-dotnet nuget add source "C:\\Program Files (x86)\\Rockwell Automation SDKs" -n RockwellSDK
+@"
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <packageSources>
+    <clear />
+    <add key="RockwellSDK" value="C:\\nuget-local" />
+    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+  </packageSources>
+</configuration>
+"@ | Out-File -Encoding utf8 $nugetConfig
 
-Write-Host "=== MOVE TO PROJECT FOLDER ==="
+Write-Host "=== USING CONFIG ==="
+Get-Content $nugetConfig
 
-cd 2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\UnitTesting_ConsoleApp
-
-dir
-
-Write-Host "=== RESTORE (DETAILED) ==="
-dotnet restore -v detailed
+Write-Host "=== RESTORE ==="
+dotnet restore --configfile $nugetConfig --no-cache -v normal
 
 Write-Host "=== BUILD ==="
-dotnet build -c Release
+dotnet build -c Release --no-restore
 '''
                     echo "Running executable..."
 
