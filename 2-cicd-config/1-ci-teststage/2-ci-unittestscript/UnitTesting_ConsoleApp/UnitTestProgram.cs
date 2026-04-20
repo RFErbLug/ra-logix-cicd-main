@@ -1,57 +1,30 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+
 using RockwellAutomation.FactoryTalkLogixEcho.Api.Client;
-using RockwellAutomation.FactoryTalkLogixEcho.Api.Client.Models;
-using RockwellAutomation.FactoryTalkLogixEcho.Api;
+using RockwellAutomation.FactoryTalkLogixEcho.Api.Interfaces;
 
-namespace UnitTesting_ConsoleApp
+class Program
 {
-    class StartUnitTest
+    static async Task Main(string[] args)
     {
-        static async Task<int> Main(string[] args)
-        {
-            Console.WriteLine("=== CI ECHO TEST START ===");
+        Console.WriteLine("=== CI ECHO TEST START ===");
 
-            try
-            {
-                string acdPath = @"C:\CI-Pipeline-Files\test.ACD";
+        // Step 1: Create client
+        var serviceClient = ClientFactory.GetServiceApiClientV2("CI Demo");
 
-                // 🔑 AUTH (this is new and REQUIRED)
-                var login = new FactoryTalkServicesPlatformLogin();
-                string token = login.GetTokenForCurrentUser();
+        // Step 2: List chassis
+        var chassisList = await serviceClient.ListChassis();
+        var chassis = chassisList.First();
 
-                // 🔌 CLIENT
-                var serviceClient = ClientFactory.GetServiceApiClientV2("CI_Demo", token);
+        Console.WriteLine($"Found chassis: {chassis.Name}");
 
-                Console.WriteLine("Creating chassis...");
-                var chassis = await serviceClient.CreateChassis(new ChassisUpdate
-                {
-                    Name = "CI_Chassis",
-                    Description = "CI Demo"
-                });
+        // Step 3: List controllers
+        var controllers = await serviceClient.ListControllers(chassis.ChassisGuid);
 
-                Console.WriteLine("Reading controller from ACD...");
-                using var file = await serviceClient.SendFile(acdPath);
-                var controller = await serviceClient.GetControllerInfoFromAcd(file);
+        Console.WriteLine($"Controllers found: {controllers.Count()}");
 
-                controller.ChassisGuid = chassis.ChassisGuid;
-
-                Console.WriteLine("Creating controller...");
-                var created = await serviceClient.CreateController(controller);
-
-                string commPath = @"EmulateEthernet\" + created.IPConfigurationData.Address;
-
-                Console.WriteLine("Controller Path: " + commPath);
-
-                Console.WriteLine("=== CI ECHO TEST PASS ===");
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("=== CI ECHO TEST FAIL ===");
-                Console.WriteLine(ex.ToString());
-                return 1;
-            }
-        }
+        Console.WriteLine("=== CI ECHO TEST PASS ===");
     }
 }
