@@ -12,10 +12,14 @@ pipeline {
                 script {
                     echo "=== CLEAN CI TEST START ==="
 
-                    powershell """
+                    powershell '''
 Write-Host "=== FIXING NUGET SOURCE ==="
 
-dotnet nuget remove source RockwellSDK 2>$null
+try {
+    dotnet nuget remove source RockwellSDK
+} catch {
+    Write-Host "NuGet source not present (ok)"
+}
 
 dotnet nuget add source "C:\\Program Files (x86)\\Rockwell Automation SDKs" -n RockwellSDK
 
@@ -24,8 +28,7 @@ dotnet restore -v detailed
 
 Write-Host "=== BUILD ==="
 dotnet build -c Release
-"""
-
+'''
                     echo "Running executable..."
 
                     bat """
