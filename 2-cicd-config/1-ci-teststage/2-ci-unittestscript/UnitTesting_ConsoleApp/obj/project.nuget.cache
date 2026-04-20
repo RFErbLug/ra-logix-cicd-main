@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Z3V75Z4upXs=",
+  "dgSpecHash": "CKlPCOUIzt0=",
   "success": true,
   "projectFilePath": "C:\\Users\\DevOps\\Desktop\\ra-logix-cicd-main\\ra-logix-cicd-main\\2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\UnitTesting_ConsoleApp\\UnitTesting_ConsoleApp.csproj",
   "expectedPackageFiles": [
@@ -17,7 +17,6 @@
     "C:\\Users\\DevOps\\.nuget\\packages\\microsoft.extensions.primitives\\8.0.0\\microsoft.extensions.primitives.8.0.0.nupkg.sha512",
     "C:\\Users\\DevOps\\.nuget\\packages\\microsoft.io.recyclablememorystream\\3.0.1\\microsoft.io.recyclablememorystream.3.0.1.nupkg.sha512",
     "C:\\Users\\DevOps\\.nuget\\packages\\microsoft.win32.systemevents\\7.0.0\\microsoft.win32.systemevents.7.0.0.nupkg.sha512",
-    "C:\\Users\\DevOps\\.nuget\\packages\\rockwellautomation.factorytalklogixecho.api.client\\4.0.1437\\rockwellautomation.factorytalklogixecho.api.client.4.0.1437.nupkg.sha512",
     "C:\\Users\\DevOps\\.nuget\\packages\\system.componentmodel.annotations\\5.0.0\\system.componentmodel.annotations.5.0.0.nupkg.sha512",
     "C:\\Users\\DevOps\\.nuget\\packages\\system.drawing.common\\7.0.0\\system.drawing.common.7.0.0.nupkg.sha512",
     "C:\\Users\\DevOps\\.nuget\\packages\\system.formats.asn1\\8.0.1\\system.formats.asn1.8.0.1.nupkg.sha512",

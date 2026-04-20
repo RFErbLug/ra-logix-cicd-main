@@ -12,16 +12,4 @@
   <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <SourceRoot Include="C:\Users\DevOps\.nuget\packages\" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <None Include="$(NuGetPackageRoot)rockwellautomation.factorytalklogixecho.api.client\4.0.1437\contentFiles\any\any\FtspAdapter\FtspAdapter.exe" Condition="Exists('$(NuGetPackageRoot)rockwellautomation.factorytalklogixecho.api.client\4.0.1437\contentFiles\any\any\FtspAdapter\FtspAdapter.exe')">
-      <NuGetPackageId>RockwellAutomation.FactoryTalkLogixEcho.Api.Client</NuGetPackageId>
-      <NuGetPackageVersion>4.0.1437</NuGetPackageVersion>
-      <NuGetItemType>None</NuGetItemType>
-      <Pack>false</Pack>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>FtspAdapter.exe</TargetPath>
-      <Private>True</Private>
-      <Link>FtspAdapter\FtspAdapter.exe</Link>
-    </None>
-  </ItemGroup>
 </Project>

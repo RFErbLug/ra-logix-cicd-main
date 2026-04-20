@@ -21,6 +21,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Rockwell Automation SDKs": {},
+          "C:\\nuget-local": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -47,10 +48,6 @@
             "EPPlus": {
               "target": "Package",
               "version": "[7.3.2, )"
-            },
-            "RockwellAutomation.FactoryTalkLogixEcho.Api.Client": {
-              "target": "Package",
-              "version": "[4.0.1437, )"
             },
             "System.Text.Json": {
               "target": "Package",
