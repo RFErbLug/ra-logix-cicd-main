@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ConsoleFormatter_ClassLibrary\ConsoleFormatter_ClassLibrary.csproj" />
     <PackageReference Include="RockwellAutomation.FactoryTalkLogixEcho.Api.Client" Version="4.0.1437" />
+    <PackageReference Include="RockwellAutomation.FactoryTalkLogixEcho.Api.Client" Version="4.0.1437" />
   </ItemGroup>
 
 </Project>
