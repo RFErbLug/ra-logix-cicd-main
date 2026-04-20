@@ -10,8 +10,11 @@ namespace UnitTesting_ConsoleApp
 
             try
             {
-                Console.WriteLine("Hello from CI pipeline.");
-                Console.WriteLine("Args count: " + args.Length);
+                Console.WriteLine("Starting Echo test...");
+
+                var client = new RockwellAutomation.FactoryTalkLogixEcho.Api.Client.EchoClient();
+
+                Console.WriteLine("Echo client created.");
 
                 Console.WriteLine("=== CI SMOKE TEST PASS ===");
                 return 0;
