@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using RockwellAutomation.FactoryTalkLogixEcho.Api.Client;
 using RockwellAutomation.FactoryTalkLogixEcho.Api.Client.Models;
+using RockwellAutomation.FactoryTalkLogixEcho.Api;
 
 namespace UnitTesting_ConsoleApp
 {
@@ -13,9 +14,14 @@ namespace UnitTesting_ConsoleApp
 
             try
             {
-                string acdPath = @"C:\\CI-Pipeline-Files\\test.ACD"; // <-- adjust later
+                string acdPath = @"C:\CI-Pipeline-Files\test.ACD";
 
-                var serviceClient = ClientFactory.GetServiceApiClientV2("CI_Demo");
+                // 🔑 AUTH (this is new and REQUIRED)
+                var login = new FactoryTalkServicesPlatformLogin();
+                string token = login.GetTokenForCurrentUser();
+
+                // 🔌 CLIENT
+                var serviceClient = ClientFactory.GetServiceApiClientV2("CI_Demo", token);
 
                 Console.WriteLine("Creating chassis...");
                 var chassis = await serviceClient.CreateChassis(new ChassisUpdate
@@ -33,7 +39,7 @@ namespace UnitTesting_ConsoleApp
                 Console.WriteLine("Creating controller...");
                 var created = await serviceClient.CreateController(controller);
 
-                string commPath = @"EmulateEthernet\\" + created.IPConfigurationData.Address;
+                string commPath = @"EmulateEthernet\" + created.IPConfigurationData.Address;
 
                 Console.WriteLine("Controller Path: " + commPath);
 
