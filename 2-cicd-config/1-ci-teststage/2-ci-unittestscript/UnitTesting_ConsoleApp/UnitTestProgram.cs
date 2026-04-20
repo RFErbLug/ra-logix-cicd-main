@@ -1,28 +1,49 @@
 ﻿using System;
+using System.Threading.Tasks;
+using RockwellAutomation.FactoryTalkLogixEcho.Api.Client;
+using RockwellAutomation.FactoryTalkLogixEcho.Api.Client.Models;
 
 namespace UnitTesting_ConsoleApp
 {
     class StartUnitTest
     {
-        static int Main(string[] args)
+        static async Task<int> Main(string[] args)
         {
-            Console.WriteLine("=== CI SMOKE TEST START ===");
+            Console.WriteLine("=== CI ECHO TEST START ===");
 
             try
             {
-                Console.WriteLine("Starting Echo test...");
+                string acdPath = @"C:\\CI-Pipeline-Files\\test.ACD"; // <-- adjust later
 
-                var client = new RockwellAutomation.FactoryTalkLogixEcho.Api.Client.EchoClient();
+                var serviceClient = ClientFactory.GetServiceApiClientV2("CI_Demo");
 
-                Console.WriteLine("Echo client created.");
+                Console.WriteLine("Creating chassis...");
+                var chassis = await serviceClient.CreateChassis(new ChassisUpdate
+                {
+                    Name = "CI_Chassis",
+                    Description = "CI Demo"
+                });
 
-                Console.WriteLine("=== CI SMOKE TEST PASS ===");
+                Console.WriteLine("Reading controller from ACD...");
+                using var file = await serviceClient.SendFile(acdPath);
+                var controller = await serviceClient.GetControllerInfoFromAcd(file);
+
+                controller.ChassisGuid = chassis.ChassisGuid;
+
+                Console.WriteLine("Creating controller...");
+                var created = await serviceClient.CreateController(controller);
+
+                string commPath = @"EmulateEthernet\\" + created.IPConfigurationData.Address;
+
+                Console.WriteLine("Controller Path: " + commPath);
+
+                Console.WriteLine("=== CI ECHO TEST PASS ===");
                 return 0;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("=== CI SMOKE TEST FAIL ===");
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("=== CI ECHO TEST FAIL ===");
+                Console.WriteLine(ex.ToString());
                 return 1;
             }
         }
