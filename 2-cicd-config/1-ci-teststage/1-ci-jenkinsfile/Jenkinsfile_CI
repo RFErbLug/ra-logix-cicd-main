@@ -13,7 +13,7 @@ pipeline {
                     echo "=== CLEAN CI TEST START ==="
 
                     powershell '''
-$nugetConfig = "$env.WORKSPACE\\nuget.config"
+$nugetConfig = "nuget.config"
 
 Write-Host "=== CREATE LOCAL NUGET CONFIG ==="
 
