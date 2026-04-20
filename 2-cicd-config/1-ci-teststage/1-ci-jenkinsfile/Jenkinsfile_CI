@@ -23,6 +23,12 @@ try {
 
 dotnet nuget add source "C:\\Program Files (x86)\\Rockwell Automation SDKs" -n RockwellSDK
 
+Write-Host "=== MOVE TO PROJECT FOLDER ==="
+
+cd 2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\UnitTesting_ConsoleApp
+
+dir
+
 Write-Host "=== RESTORE (DETAILED) ==="
 dotnet restore -v detailed
 
