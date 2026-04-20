@@ -28,11 +28,14 @@ Write-Host "=== CREATE LOCAL NUGET CONFIG ==="
 </configuration>
 "@ | Out-File -Encoding utf8 $nugetConfig
 
-Write-Host "=== USING CONFIG ==="
-Get-Content $nugetConfig
+Write-Host "=== MOVE TO PROJECT ==="
+
+cd 2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\UnitTesting_ConsoleApp
+
+dir
 
 Write-Host "=== RESTORE ==="
-dotnet restore --configfile $nugetConfig --no-cache -v normal
+dotnet restore --configfile ..\\..\\..\\..\\nuget.config --no-cache -v normal
 
 Write-Host "=== BUILD ==="
 dotnet build -c Release --no-restore
