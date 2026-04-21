@@ -9,10 +9,11 @@ var serviceClient = ClientFactory.GetServiceApiClientV2("CI_Demo", 46520);
 // 1. Get chassis
 var chassisOne = (await serviceClient.ListChassis()).First();
 
-Console.WriteLine($"Using chassis: {chassis.Name}");
+Console.WriteLine($"Using chassis: {chassisOne.Name}");
 
 // 2. Get firmware
 var firmwareGuid = (await serviceClient.ListFirmwarePackages()).First().Uuid;
+var hasPartner = false;
 
 // 3. Get available slot
 var availableSlotsInChassisOne = await serviceClient.ListAvailableSlotNumbers(chassisOne.ChassisGuid, null, hasPartner);
