@@ -1,86 +1,56 @@
 ﻿using RockwellAutomation.FactoryTalkLogixEcho.Api.Client;
 using RockwellAutomation.FactoryTalkLogixEcho.Api.Interfaces;
 
-Console.WriteLine("=== CI ECHO CREATE + DOWNLOAD TEST START ===");
+Console.WriteLine("=== ECHO DIAGNOSTIC START ===");
 
-// Create client (async API)
+// Create client
 var serviceClient = ClientFactory.GetServiceApiClientV2("CI_Demo", 46520);
 
-// 1. Get chassis
-var chassisOne = (await serviceClient.ListChassis()).First();
+// --------------------
+// A — Firmware list
+// --------------------
+Console.WriteLine("\n--- FIRMWARE PACKAGES ---");
 
-Console.WriteLine($"Using chassis: {chassisOne.Name}");
+var firmwares = await serviceClient.ListFirmwarePackages();
 
-// 2. Get firmware
-var firmware = (await serviceClient.ListFirmwarePackages())
-    .First(f => f.Name.Contains("1756"));
-
-var firmwareGuid = firmware.Uuid;
-var hasPartner = false;
-
-// 3. Get available slot
-var availableSlotsInChassisOne = await serviceClient.ListAvailableSlotNumbers(chassisOne.ChassisGuid, null, hasPartner);
-var firstAvailableSlotInChassisOne = availableSlotsInChassisOne.First();
-
-// 4. Create controller
-var updateForControllerCreation = new ControllerUpdate
+foreach (var fw in firmwares)
 {
-    FirmwarePackageGuid = firmwareGuid,
-    Name = "CI_Controller",
-    Description = "Created by CI",
-    ChassisGuid = chassisOne.ChassisGuid,
-    Slot = (uint)firstAvailableSlotInChassisOne,
-    IPConfigurationData = new IP4ConfigurationData
-    {
-        Address = System.Net.IPAddress.Parse("127.0.0.1"),
-        Netmask = System.Net.IPAddress.Parse("255.255.255.0")
-    },
-    KeySwitchPosition = KeySwitchPosition.Remote,
-    IsEnabled = true,
-    IsSdCardAttached = false,
-    ProjectPath = @"C:\CI-Pipeline-Files\test.ACD",
-    HasPartner = false
-};
-
-var controller = await serviceClient.CreateController(updateForControllerCreation);
-
-Console.WriteLine($"Created controller: {controller.ControllerGuid}");
-
-// 5. Download project
-string acdPath = @"C:\CI-Pipeline-Files\3-generatedfiles\CI_Project.ACD";
-
-using (var fileHandle = await serviceClient.SendFile(acdPath))
-{
-    await serviceClient.Download(controller.ControllerGuid, fileHandle);
+    Console.WriteLine($"{fw.Name} | {fw.Uuid}");
 }
 
-// 6. Monitor download
-DownloadFeedback feedback;
+// --------------------
+// B — Chassis list
+// --------------------
+Console.WriteLine("\n--- CHASSIS LIST ---");
 
-do
+var chassisList = await serviceClient.ListChassis();
+
+foreach (var ch in chassisList)
 {
-    feedback = await serviceClient.GetDownloadFeedback(controller.ControllerGuid);
-
-    foreach (var msg in feedback.Messages)
-    {
-        Console.WriteLine(msg);
-    }
-
-} while (feedback.State == OperationState.InProgress);
-
-if (feedback.State != OperationState.Done)
-{
-    throw new Exception($"Download failed: {feedback.State}");
+    Console.WriteLine($"{ch.Name} | {ch.ChassisGuid}");
 }
 
-Console.WriteLine("Download complete");
+// --------------------
+// Pick first chassis
+// --------------------
+var chassisOne = chassisList.First();
 
-// 7. Verify file exists
-if (!File.Exists(acdPath))
+Console.WriteLine($"\nUsing chassis: {chassisOne.Name}");
+
+// --------------------
+// C — Slot list
+// --------------------
+Console.WriteLine("\n--- AVAILABLE SLOTS ---");
+
+var slots = await serviceClient.ListAvailableSlotNumbers(
+    chassisOne.ChassisGuid,
+    null,
+    false
+);
+
+foreach (var s in slots)
 {
-    throw new Exception("ACD file not found");
+    Console.WriteLine($"Slot: {s}");
 }
 
-Console.WriteLine("File verified");
-
-Console.WriteLine("=== CI ECHO TEST PASS ===");
+Console.WriteLine("\n=== ECHO DIAGNOSTIC END ===");
