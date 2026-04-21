@@ -1,56 +1,35 @@
 ﻿using RockwellAutomation.FactoryTalkLogixEcho.Api.Client;
 using RockwellAutomation.FactoryTalkLogixEcho.Api.Interfaces;
 
-Console.WriteLine("=== ECHO DIAGNOSTIC START ===");
+Console.WriteLine("=== ECHO ACD INSPECTION START ===");
 
 // Create client
 var serviceClient = ClientFactory.GetServiceApiClientV2("CI_Demo", 46520);
 
-// --------------------
-// A — Firmware list
-// --------------------
-Console.WriteLine("\n--- FIRMWARE PACKAGES ---");
+// Path to your ACD
+string acdPath = @"C:\CI-Pipeline-Files\test.ACD";
 
-var firmwares = await serviceClient.ListFirmwarePackages();
+Console.WriteLine($"Loading ACD: {acdPath}");
 
-foreach (var fw in firmwares)
+// Send file to Echo
+using (var fileHandle = await serviceClient.SendFile(acdPath))
 {
-    Console.WriteLine($"{fw.Name} | {fw.Uuid}");
+    Console.WriteLine("\n--- EXTRACTING CONTROLLER INFO FROM ACD ---");
+
+    var controllerUpdate = await serviceClient.GetControllerInfoFromAcd(fileHandle);
+
+    Console.WriteLine("\n--- CONTROLLER UPDATE FROM ACD ---");
+
+    Console.WriteLine($"Name: {controllerUpdate.Name}");
+    Console.WriteLine($"Description: {controllerUpdate.Description}");
+    Console.WriteLine($"ChassisGuid: {controllerUpdate.ChassisGuid}");
+    Console.WriteLine($"Slot: {controllerUpdate.Slot}");
+    Console.WriteLine($"HasPartner: {controllerUpdate.HasPartner}");
+    Console.WriteLine($"FirmwarePackageGuid: {controllerUpdate.FirmwarePackageGuid}");
+
+    // Optional: dump anything else useful (safe introspection)
+    Console.WriteLine("\n--- RAW OBJECT DUMP (for anything hidden) ---");
+    Console.WriteLine(controllerUpdate.ToString());
 }
 
-// --------------------
-// B — Chassis list
-// --------------------
-Console.WriteLine("\n--- CHASSIS LIST ---");
-
-var chassisList = await serviceClient.ListChassis();
-
-foreach (var ch in chassisList)
-{
-    Console.WriteLine($"{ch.Name} | {ch.ChassisGuid}");
-}
-
-// --------------------
-// Pick first chassis
-// --------------------
-var chassisOne = chassisList.First();
-
-Console.WriteLine($"\nUsing chassis: {chassisOne.Name}");
-
-// --------------------
-// C — Slot list
-// --------------------
-Console.WriteLine("\n--- AVAILABLE SLOTS ---");
-
-var slots = await serviceClient.ListAvailableSlotNumbers(
-    chassisOne.ChassisGuid,
-    null,
-    false
-);
-
-foreach (var s in slots)
-{
-    Console.WriteLine($"Slot: {s}");
-}
-
-Console.WriteLine("\n=== ECHO DIAGNOSTIC END ===");
+Console.WriteLine("\n=== ECHO ACD INSPECTION END ===");
