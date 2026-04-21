@@ -7,7 +7,7 @@ Console.WriteLine("=== CI ECHO CREATE + DOWNLOAD TEST START ===");
 var serviceClient = ClientFactory.GetServiceApiClientV2("CI_Demo", 46520);
 
 // 1. Get chassis
-var chassis = (await serviceClient.ListChassis()).First();
+var chassisOne = (await serviceClient.ListChassis()).First();
 
 Console.WriteLine($"Using chassis: {chassis.Name}");
 
@@ -15,8 +15,8 @@ Console.WriteLine($"Using chassis: {chassis.Name}");
 var firmwareGuid = (await serviceClient.ListFirmwarePackages()).First().Uuid;
 
 // 3. Get available slot
-var slots = await serviceClient.ListAvailableSlotNumbers(chassis.ChassisGuid, null, false);
-var slot = slots.First();
+var availableSlotsInChassisOne = await serviceClient.ListAvailableSlotNumbers(chassisOne.ChassisGuid, null, hasPartner);
+var firstAvailableSlotInChassisOne = availableSlotsInChassisOne.First();
 
 // 4. Create controller
 var controllerUpdate = new ControllerUpdate
@@ -24,8 +24,8 @@ var controllerUpdate = new ControllerUpdate
     FirmwarePackageGuid = firmwareGuid,
     Name = "CI_Controller",
     Description = "Created by CI",
-    ChassisGuid = chassis.ChassisGuid,
-    Slot = (uint)slot,
+    ChassisGuid = chassisOne.ChassisGuid,
+    Slot = firstAvailableSlotInChassisOne,
     IPConfigurationData = new IP4ConfigurationData
     {
         Address = System.Net.IPAddress.Parse("127.0.0.1"),
@@ -38,7 +38,7 @@ var controllerUpdate = new ControllerUpdate
     HasPartner = false
 };
 
-var controller = await serviceClient.CreateController(controllerUpdate);
+var controller = await serviceClient.CreateController(updateForControllerCreation);
 
 Console.WriteLine($"Created controller: {controller.ControllerGuid}");
 
