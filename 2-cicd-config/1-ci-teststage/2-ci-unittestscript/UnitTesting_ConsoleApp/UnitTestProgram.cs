@@ -12,7 +12,12 @@ var chassisOne = (await serviceClient.ListChassis()).First();
 Console.WriteLine($"Using chassis: {chassisOne.Name}");
 
 // 2. Get firmware
-var firmwareGuid = (await serviceClient.ListFirmwarePackages()).First().Uuid;
+var firmwares = await serviceClient.ListFirmwarePackages();
+
+foreach (var fw in firmwares)
+{
+    Console.WriteLine(fw.Name);
+}
 var hasPartner = false;
 
 // 3. Get available slot
