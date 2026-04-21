@@ -25,7 +25,7 @@ var controllerUpdate = new ControllerUpdate
     Name = "CI_Controller",
     Description = "Created by CI",
     ChassisGuid = chassis.ChassisGuid,
-    Slot = slot,
+    Slot = (unit)slot,
     IPConfigurationData = new IP4ConfigurationData
     {
         Address = System.Net.IPAddress.Parse("127.0.0.1"),
@@ -40,7 +40,7 @@ var controllerUpdate = new ControllerUpdate
 
 var controller = await serviceClient.CreateController(controllerUpdate);
 
-Console.WriteLine($"Created controller: {controller.Name}");
+Console.WriteLine($"Created controller: {controller.ControllerGuid}");
 
 // 5. Download project
 string acdPath = @"C:\CI-Pipeline-Files\3-generatedfiles\CI_Project.ACD";
