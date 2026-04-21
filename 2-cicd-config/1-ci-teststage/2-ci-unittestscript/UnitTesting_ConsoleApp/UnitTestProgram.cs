@@ -25,7 +25,7 @@ var controllerUpdate = new ControllerUpdate
     Name = "CI_Controller",
     Description = "Created by CI",
     ChassisGuid = chassis.ChassisGuid,
-    Slot = (unit)slot,
+    Slot = (uint)slot,
     IPConfigurationData = new IP4ConfigurationData
     {
         Address = System.Net.IPAddress.Parse("127.0.0.1"),
