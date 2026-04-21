@@ -5,6 +5,9 @@ Console.WriteLine("=== ACD → CONTROLLER → DOWNLOAD TEST START ===");
 
 var serviceClient = ClientFactory.GetServiceApiClientV2("CI_Demo", 46520);
 
+// ADD THIS LINE ONLY
+serviceClient.LoginFactoryTalkUser("desktop-c2jqv6k\\jenkins", "Rockwell1");
+
 string acdPath = @"C:\CI-Pipeline-Files\test.ACD";
 
 // 1. Get chassis
