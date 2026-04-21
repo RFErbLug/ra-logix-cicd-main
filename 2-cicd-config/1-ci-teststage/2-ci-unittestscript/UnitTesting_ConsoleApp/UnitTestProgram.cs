@@ -6,7 +6,15 @@ Console.WriteLine("=== ACD → CONTROLLER → DOWNLOAD TEST START ===");
 var serviceClient = ClientFactory.GetServiceApiClientV2("CI_Demo", 46520);
 
 // ADD THIS LINE ONLY
-serviceClient.LoginFactoryTalkUser("DESKTOP-C2JQV6K\\DevOps", "Rockwell1");
+var ftLogin = new FactoryTalkServicesPlatformLogin();
+string userToken = ftLogin.GetTokenForUser("desktop-c2jqv6k\\DevOps", "Rockwell1");
+
+Console.WriteLine("Token acquired successfully.");
+
+serviceClient.LoginFactoryTalkUser(userToken);
+
+Console.WriteLine("Token login applied successfully.");
+
 
 string acdPath = @"C:\CI-Pipeline-Files\test.ACD";
 
