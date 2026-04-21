@@ -39,7 +39,7 @@ using (var fileHandle = await serviceClient.SendFile(acdPath))
     // 4. Slot decision logic (instrumented)
     uint finalSlot;
 
-    if (availableSlots.Contains(controllerUpdate.Slot))
+    if (availableSlots.Contains((int)controllerUpdate.Slot))
     {
         finalSlot = controllerUpdate.Slot;
         Console.WriteLine($"\nUsing ACD slot: {finalSlot}");
