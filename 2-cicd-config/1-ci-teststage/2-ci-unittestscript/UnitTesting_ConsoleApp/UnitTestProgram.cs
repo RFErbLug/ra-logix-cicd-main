@@ -4,7 +4,7 @@ using RockwellAutomation.FactoryTalkLogixEcho.Api.Interfaces;
 Console.WriteLine("=== CI ECHO CREATE + DOWNLOAD TEST START ===");
 
 // Create client (async API)
-var serviceClient = ClientFactory.GetServiceApiClientV2("CI_Demo", 50051);
+var serviceClient = ClientFactory.GetServiceApiClientV2("CI_Demo", 46520);
 
 // 1. Get chassis
 var chassis = (await serviceClient.ListChassis()).First();

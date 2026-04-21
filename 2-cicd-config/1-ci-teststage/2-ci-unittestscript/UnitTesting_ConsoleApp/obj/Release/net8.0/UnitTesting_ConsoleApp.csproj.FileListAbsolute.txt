@@ -1,0 +1,6 @@
+C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\obj\Release\net8.0\UnitTesting_ConsoleApp.csproj.AssemblyReference.cache
+C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\obj\Release\net8.0\UnitTesting_ConsoleApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\obj\Release\net8.0\UnitTesting_ConsoleApp.AssemblyInfoInputs.cache
+C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\obj\Release\net8.0\UnitTesting_ConsoleApp.AssemblyInfo.cs
+C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\obj\Release\net8.0\UnitTesting_ConsoleApp.csproj.CoreCompileInputs.cache
+C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\obj\Release\net8.0\UnitTesting_ConsoleApp.sourcelink.json

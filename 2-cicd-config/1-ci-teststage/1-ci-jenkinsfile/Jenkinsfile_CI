@@ -36,10 +36,28 @@ if ($service.Status -ne "Running") {
 Write-Host "Echo service is running"
 
 # Verify port is open (gRPC)
-$portCheck = netstat -ano | findstr 50051
+$port = 46520
+$maxRetries = 10
+$delay = 3
 
-if (-not $portCheck) {
-    throw "Echo is not listening on port 50051"
+$ready = $false
+
+for ($i = 0; $i -lt $maxRetries; $i++) {
+
+    Write-Host "Checking port $port (attempt $($i+1))..."
+
+    $portCheck = netstat -ano | findstr $port
+
+    if ($portCheck) {
+        $ready = $true
+        break
+    }
+
+    Start-Sleep -Seconds $delay
+}
+
+if (-not $ready) {
+    throw "Echo is not listening on port $port after waiting"
 }
 
 Write-Host "Echo port verified"
