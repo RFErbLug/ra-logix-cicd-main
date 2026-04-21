@@ -1,18 +1,58 @@
 pipeline {
     agent any
 
-    triggers { 
+    triggers {
         pollSCM('* * * * *')
     }
 
     stages {
 
+        stage('Ensure Echo Running') {
+            steps {
+                powershell '''
+$serviceName = "FactoryTalk Logix Echo"
+
+Write-Host "Checking Echo service..."
+
+$service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
+
+if (-not $service) {
+    throw "Echo service not found"
+}
+
+if ($service.Status -ne "Running") {
+    Write-Host "Starting Echo service..."
+    Start-Service -Name $serviceName
+    Start-Sleep -Seconds 5
+}
+
+# Re-check status
+$service = Get-Service -Name $serviceName
+
+if ($service.Status -ne "Running") {
+    throw "Echo service failed to start"
+}
+
+Write-Host "Echo service is running"
+
+# Verify port is open (gRPC)
+$portCheck = netstat -ano | findstr 50051
+
+if (-not $portCheck) {
+    throw "Echo is not listening on port 50051"
+}
+
+Write-Host "Echo port verified"
+'''
+            }
+        }
+
         stage('Test') {
             steps {
-                script {
-                    echo "=== CLEAN CI TEST START ==="
 
-                    powershell '''
+                echo "=== CLEAN CI TEST START ==="
+
+                powershell '''
 $nugetConfig = "nuget.config"
 
 Write-Host "=== CREATE LOCAL NUGET CONFIG ==="
@@ -40,14 +80,14 @@ dotnet restore --configfile ..\\..\\..\\..\\nuget.config --no-cache -v normal
 Write-Host "=== BUILD ==="
 dotnet build -c Release --no-restore
 '''
-                    echo "Running executable..."
 
-                    bat """
+                echo "Running executable..."
+
+                bat """
 ${env.WORKSPACE}\\2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\UnitTesting_ConsoleApp\\bin\\Release\\net8.0\\UnitTesting_ConsoleApp.exe
 """
 
-                    echo "=== CLEAN CI TEST END ==="
-                }
+                echo "=== CLEAN CI TEST END ==="
             }
         }
 

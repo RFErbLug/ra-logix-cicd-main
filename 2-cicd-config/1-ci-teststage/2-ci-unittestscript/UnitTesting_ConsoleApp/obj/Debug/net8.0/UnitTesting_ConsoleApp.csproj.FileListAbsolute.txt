@@ -6,6 +6,10 @@ C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci
 C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\bin\Debug\net8.0\EPPlus.dll
 C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\bin\Debug\net8.0\EPPlus.Interfaces.dll
 C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\bin\Debug\net8.0\EPPlus.System.Drawing.dll
+C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\bin\Debug\net8.0\Google.Protobuf.dll
+C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\bin\Debug\net8.0\Grpc.Core.Api.dll
+C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\bin\Debug\net8.0\Grpc.Net.Client.dll
+C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\bin\Debug\net8.0\Grpc.Net.Common.dll
 C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\bin\Debug\net8.0\Microsoft.Extensions.Configuration.dll
 C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\bin\Debug\net8.0\Microsoft.Extensions.Configuration.Abstractions.dll
 C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\bin\Debug\net8.0\Microsoft.Extensions.Configuration.FileExtensions.dll
@@ -13,6 +17,7 @@ C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci
 C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\bin\Debug\net8.0\Microsoft.Extensions.FileProviders.Abstractions.dll
 C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\bin\Debug\net8.0\Microsoft.Extensions.FileProviders.Physical.dll
 C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\bin\Debug\net8.0\Microsoft.Extensions.FileSystemGlobbing.dll
+C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
 C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\bin\Debug\net8.0\Microsoft.Extensions.Primitives.dll
 C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\bin\Debug\net8.0\Microsoft.IO.RecyclableMemoryStream.dll
 C:\Users\DevOps\Desktop\ra-logix-cicd-main\ra-logix-cicd-main\2-cicd-config\1-ci-teststage\2-ci-unittestscript\UnitTesting_ConsoleApp\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
