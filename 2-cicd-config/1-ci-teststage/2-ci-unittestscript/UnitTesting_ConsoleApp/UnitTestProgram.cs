@@ -3,20 +3,31 @@ using RockwellAutomation.FactoryTalkLogixEcho.Api.Interfaces;
 
 Console.WriteLine("=== ACD → CONTROLLER → DOWNLOAD TEST START ===");
 
-// Create client
 var serviceClient = ClientFactory.GetServiceApiClientV2("CI_Demo", 46520);
 
-// Path to your ACD
 string acdPath = @"C:\CI-Pipeline-Files\test.ACD";
 
 // 1. Get chassis
 var chassis = (await serviceClient.ListChassis()).First();
 Console.WriteLine($"Using chassis: {chassis.Name}");
 
-// 2. Send ACD to Echo
+// 2. Get available slots
+var availableSlots = await serviceClient.ListAvailableSlotNumbers(
+    chassis.ChassisGuid,
+    null,
+    false
+);
+
+// PRINT AVAILABLE SLOTS
+Console.WriteLine("\n--- AVAILABLE SLOTS ---");
+foreach (var s in availableSlots)
+{
+    Console.WriteLine($"Slot: {s}");
+}
+
+// 3. Send ACD
 using (var fileHandle = await serviceClient.SendFile(acdPath))
 {
-    // 3. Extract controller config FROM ACD
     var controllerUpdate = await serviceClient.GetControllerInfoFromAcd(fileHandle);
 
     Console.WriteLine("\n--- FROM ACD ---");
@@ -25,19 +36,33 @@ using (var fileHandle = await serviceClient.SendFile(acdPath))
     Console.WriteLine($"HasPartner: {controllerUpdate.HasPartner}");
     Console.WriteLine($"Firmware GUID: {controllerUpdate.FirmwarePackageGuid}");
 
-    // 4. Attach to chassis (ONLY override)
+    // 4. Slot decision logic (instrumented)
+    uint finalSlot;
+
+    if (availableSlots.Contains(controllerUpdate.Slot))
+    {
+        finalSlot = controllerUpdate.Slot;
+        Console.WriteLine($"\nUsing ACD slot: {finalSlot}");
+    }
+    else
+    {
+        finalSlot = (uint)availableSlots.First();
+        Console.WriteLine($"\nACD slot occupied → switching to slot: {finalSlot}");
+    }
+
+    // APPLY SLOT
     controllerUpdate.ChassisGuid = chassis.ChassisGuid;
+    controllerUpdate.Slot = finalSlot;
 
     Console.WriteLine("\n--- FINAL CONFIG ---");
     Console.WriteLine($"ChassisGuid: {controllerUpdate.ChassisGuid}");
-    Console.WriteLine($"Slot: {controllerUpdate.Slot}");
+    Console.WriteLine($"Assigned Slot: {controllerUpdate.Slot}");
 
     // 5. Create controller
     var controller = await serviceClient.CreateController(controllerUpdate);
-
     Console.WriteLine($"\nCreated controller: {controller.ControllerGuid}");
 
-    // 6. Download project to controller
+    // 6. Download
     Console.WriteLine("\n--- STARTING DOWNLOAD ---");
 
     using (var downloadHandle = await serviceClient.SendFile(acdPath))
@@ -45,7 +70,7 @@ using (var fileHandle = await serviceClient.SendFile(acdPath))
         await serviceClient.Download(controller.ControllerGuid, downloadHandle);
     }
 
-    // 7. Monitor download
+    // 7. Monitor
     DownloadFeedback feedback;
 
     do
@@ -59,7 +84,6 @@ using (var fileHandle = await serviceClient.SendFile(acdPath))
 
     } while (feedback.State == OperationState.InProgress);
 
-    // 8. Final check
     if (feedback.State != OperationState.Done)
     {
         throw new Exception($"Download failed: {feedback.State}");
