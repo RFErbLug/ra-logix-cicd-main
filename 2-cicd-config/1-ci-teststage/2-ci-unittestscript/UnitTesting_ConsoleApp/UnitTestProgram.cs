@@ -1,7 +1,7 @@
 ﻿using RockwellAutomation.FactoryTalkLogixEcho.Api.Client;
 using RockwellAutomation.FactoryTalkLogixEcho.Api.Interfaces;
 
-Console.WriteLine("=== ECHO ACD INSPECTION START ===");
+Console.WriteLine("=== ACD → CONTROLLER CREATION TEST START ===");
 
 // Create client
 var serviceClient = ClientFactory.GetServiceApiClientV2("CI_Demo", 46520);
@@ -9,27 +9,33 @@ var serviceClient = ClientFactory.GetServiceApiClientV2("CI_Demo", 46520);
 // Path to your ACD
 string acdPath = @"C:\CI-Pipeline-Files\test.ACD";
 
-Console.WriteLine($"Loading ACD: {acdPath}");
+// 1. Get chassis (we KNOW this exists from earlier)
+var chassis = (await serviceClient.ListChassis()).First();
+Console.WriteLine($"Using chassis: {chassis.Name}");
 
-// Send file to Echo
+// 2. Send ACD to Echo
 using (var fileHandle = await serviceClient.SendFile(acdPath))
 {
-    Console.WriteLine("\n--- EXTRACTING CONTROLLER INFO FROM ACD ---");
-
+    // 3. Extract controller config FROM ACD (this is the key)
     var controllerUpdate = await serviceClient.GetControllerInfoFromAcd(fileHandle);
 
-    Console.WriteLine("\n--- CONTROLLER UPDATE FROM ACD ---");
-
+    Console.WriteLine("\n--- FROM ACD ---");
     Console.WriteLine($"Name: {controllerUpdate.Name}");
-    Console.WriteLine($"Description: {controllerUpdate.Description}");
+    Console.WriteLine($"Slot (ACD): {controllerUpdate.Slot}");
+    Console.WriteLine($"HasPartner: {controllerUpdate.HasPartner}");
+    Console.WriteLine($"Firmware GUID: {controllerUpdate.FirmwarePackageGuid}");
+
+    // 4. Attach to chassis (THIS is the only thing we override)
+    controllerUpdate.ChassisGuid = chassis.ChassisGuid;
+
+    Console.WriteLine("\n--- FINAL CONFIG ---");
     Console.WriteLine($"ChassisGuid: {controllerUpdate.ChassisGuid}");
     Console.WriteLine($"Slot: {controllerUpdate.Slot}");
-    Console.WriteLine($"HasPartner: {controllerUpdate.HasPartner}");
-    Console.WriteLine($"FirmwarePackageGuid: {controllerUpdate.FirmwarePackageGuid}");
 
-    // Optional: dump anything else useful (safe introspection)
-    Console.WriteLine("\n--- RAW OBJECT DUMP (for anything hidden) ---");
-    Console.WriteLine(controllerUpdate.ToString());
+    // 5. Create controller
+    var controller = await serviceClient.CreateController(controllerUpdate);
+
+    Console.WriteLine($"\nCreated controller: {controller.ControllerGuid}");
 }
 
-Console.WriteLine("\n=== ECHO ACD INSPECTION END ===");
+Console.WriteLine("\n=== TEST COMPLETE ===");
