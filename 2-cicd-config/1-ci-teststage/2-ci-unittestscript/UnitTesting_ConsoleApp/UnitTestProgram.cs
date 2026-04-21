@@ -1,5 +1,6 @@
 ﻿using RockwellAutomation.FactoryTalkLogixEcho.Api.Client;
 using RockwellAutomation.FactoryTalkLogixEcho.Api.Interfaces;
+using RockwellAutomation.FactoryTalkLogixEcho.Api;
 
 Console.WriteLine("=== ACD → CONTROLLER → DOWNLOAD TEST START ===");
 
