@@ -20,13 +20,13 @@ var availableSlotsInChassisOne = await serviceClient.ListAvailableSlotNumbers(ch
 var firstAvailableSlotInChassisOne = availableSlotsInChassisOne.First();
 
 // 4. Create controller
-var controllerUpdate = new ControllerUpdate
+var updateForControllerCreation = new ControllerUpdate
 {
     FirmwarePackageGuid = firmwareGuid,
     Name = "CI_Controller",
     Description = "Created by CI",
     ChassisGuid = chassisOne.ChassisGuid,
-    Slot = firstAvailableSlotInChassisOne,
+    Slot = (uint)firstAvailableSlotInChassisOne,
     IPConfigurationData = new IP4ConfigurationData
     {
         Address = System.Net.IPAddress.Parse("127.0.0.1"),
