@@ -1,107 +1,37 @@
 ﻿using RockwellAutomation.FactoryTalkLogixEcho.Api.Client;
-using RockwellAutomation.FactoryTalkLogixEcho.Api.Interfaces;
-using RockwellAutomation.FactoryTalkLogixEcho.Api;
+using System;
+using System.Linq;
 
-Console.WriteLine("=== ACD → CONTROLLER → DOWNLOAD TEST START ===");
+var serviceClient = ClientFactory.GetServiceApiClientV2("ListControllers", 46520);
 
-var serviceClient = ClientFactory.GetServiceApiClientV2("CI_Demo", 46520);
-
-// ADD THIS LINE ONLY
-var ftLogin = new FactoryTalkServicesPlatformLogin();
-string userToken = ftLogin.GetTokenForUser("desktop-c2jqv6k\\DevOps", "Rockwell1");
-
-Console.WriteLine("Token acquired successfully.");
-
-serviceClient.LoginFactoryTalkUser(userToken);
-
-Console.WriteLine("Token login applied successfully.");
-
-
-string acdPath = @"C:\CI-Pipeline-Files\test.ACD";
-
-// 1. Get chassis
-var chassis = (await serviceClient.ListChassis()).First();
-Console.WriteLine($"Using chassis: {chassis.Name}");
-
-// 2. Get available slots
-var availableSlots = await serviceClient.ListAvailableSlotNumbers(
-    chassis.ChassisGuid,
-    null,
-    false
-);
-
-// PRINT AVAILABLE SLOTS
-Console.WriteLine("\n--- AVAILABLE SLOTS ---");
-foreach (var s in availableSlots)
+try
 {
-    Console.WriteLine($"Slot: {s}");
-}
+    var chassisList = await serviceClient.ListChassis();
 
-// 3. Send ACD
-using (var fileHandle = await serviceClient.SendFile(acdPath))
-{
-    var controllerUpdate = await serviceClient.GetControllerInfoFromAcd(fileHandle);
-
-    Console.WriteLine("\n--- FROM ACD ---");
-    Console.WriteLine($"Name: {controllerUpdate.Name}");
-    Console.WriteLine($"Slot (ACD): {controllerUpdate.Slot}");
-    Console.WriteLine($"HasPartner: {controllerUpdate.HasPartner}");
-    Console.WriteLine($"Firmware GUID: {controllerUpdate.FirmwarePackageGuid}");
-
-    // 4. Slot decision logic (instrumented)
-    uint finalSlot;
-
-    if (availableSlots.Contains((int)controllerUpdate.Slot))
+    foreach (var chassis in chassisList)
     {
-        finalSlot = controllerUpdate.Slot;
-        Console.WriteLine($"\nUsing ACD slot: {finalSlot}");
-    }
-    else
-    {
-        finalSlot = (uint)availableSlots.First();
-        Console.WriteLine($"\nACD slot occupied → switching to slot: {finalSlot}");
-    }
+        Console.WriteLine($"Chassis: {chassis.Name}");
+        Console.WriteLine($"ChassisGuid: {chassis.ChassisGuid}");
 
-    // APPLY SLOT
-    controllerUpdate.ChassisGuid = chassis.ChassisGuid;
-    controllerUpdate.Slot = finalSlot;
+        var controllers = await serviceClient.ListControllers(chassis.ChassisGuid);
 
-    Console.WriteLine("\n--- FINAL CONFIG ---");
-    Console.WriteLine($"ChassisGuid: {controllerUpdate.ChassisGuid}");
-    Console.WriteLine($"Assigned Slot: {controllerUpdate.Slot}");
-
-    // 5. Create controller
-    var controller = await serviceClient.CreateController(controllerUpdate);
-    Console.WriteLine($"\nCreated controller: {controller.ControllerGuid}");
-
-    // 6. Download
-    Console.WriteLine("\n--- STARTING DOWNLOAD ---");
-
-    using (var downloadHandle = await serviceClient.SendFile(acdPath))
-    {
-        await serviceClient.Download(controller.ControllerGuid, downloadHandle);
-    }
-
-    // 7. Monitor
-    DownloadFeedback feedback;
-
-    do
-    {
-        feedback = await serviceClient.GetDownloadFeedback(controller.ControllerGuid);
-
-        foreach (var msg in feedback.Messages)
+        if (!controllers.Any())
         {
-            Console.WriteLine(msg);
+            Console.WriteLine("  No controllers found.");
+        }
+        else
+        {
+            foreach (var controller in controllers)
+            {
+                Console.WriteLine($"  ControllerName: {controller.ControllerName}");
+                Console.WriteLine($"  ControllerGuid: {controller.ControllerGuid}");
+            }
         }
 
-    } while (feedback.State == OperationState.InProgress);
-
-    if (feedback.State != OperationState.Done)
-    {
-        throw new Exception($"Download failed: {feedback.State}");
+        Console.WriteLine();
     }
-
-    Console.WriteLine("\nDownload complete");
 }
-
-Console.WriteLine("\n=== TEST COMPLETE ===");
+catch (Exception ex)
+{
+    Console.WriteLine(ex.ToString());
+}
