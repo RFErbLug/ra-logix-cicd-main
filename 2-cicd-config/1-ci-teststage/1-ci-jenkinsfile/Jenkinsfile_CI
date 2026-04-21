@@ -10,7 +10,7 @@ pipeline {
         stage('Ensure Echo Running') {
             steps {
                 powershell '''
-$serviceName = "FactoryTalk Logix Echo"
+$serviceName = "FactoryTalk Logix Echo Service"
 
 Write-Host "Checking Echo service..."
 
