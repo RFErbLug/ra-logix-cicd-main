@@ -1,66 +1,206 @@
 ﻿using RockwellAutomation.FactoryTalkLogixEcho.Api.Client;
 using RockwellAutomation.FactoryTalkLogixEcho.Api.Interfaces;
 using System;
-using System.Threading.Tasks;
+using System.Linq;
+using System.Reflection;
 
-Console.WriteLine("=== SAMPLE-STYLE DOWNLOAD TEST START ===");
+const bool SHOW_FULL_TOKEN = false;
 
-// CHANGE THESE TWO VALUES
-string acdFilePath = @"C:\CI-Pipeline-Files\test.ACD";
-Guid controllerGuid = Guid.Parse("c8503cca-41e7-4a04-9352-5541488a7840");
+string ftUser = @"DESKTOP-C2JQV6K\DevOps";   // or just "DevOps"
+string ftPassword = "PUT_PASSWORD_HERE";
 
-// Use your Echo port explicitly
-var serviceClient = ClientFactory.GetServiceApiClientV2("CI_Demo", 46520);
+Console.WriteLine("=== FTSP TOKEN TROUBLESHOOT START ===");
 
 try
 {
-    Console.WriteLine($"ACD Path: {acdFilePath}");
-    Console.WriteLine($"Controller GUID: {controllerGuid}");
+    var serviceClient = ClientFactory.GetServiceApiClientV2("FTSP_Token_Test", 46520);
 
-    // Confirm controller exists
-    var controller = await serviceClient.ReadController(controllerGuid);
-    Console.WriteLine($"Controller found: {controller.ControllerName}");
-    Console.WriteLine($"Controller ID: {controller.ControllerGuid}");
-
-    // Send file and start download
-    using (var fileHandle = await serviceClient.SendFile(acdFilePath))
+    Console.WriteLine();
+    Console.WriteLine("--- CLIENT SESSION INFO ---");
+    try
     {
-        Console.WriteLine("File sent to service.");
-        Console.WriteLine("Starting download...");
-        await serviceClient.Download(controller.ControllerGuid, fileHandle);
+        var session = serviceClient.GetClientSessionInfo();
+        Console.WriteLine($"DescriptiveClientName: {session.DescriptiveClientName}");
+        Console.WriteLine($"ClientId: {session.ClientId}");
+        Console.WriteLine($"ClientUsername: {session.ClientUsername}");
+        Console.WriteLine($"ClientFullName: {session.ClientFullName}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Could not read client session info.");
+        Console.WriteLine(ex.ToString());
     }
 
-    // Poll feedback
-    DownloadFeedback downloadFeedback;
-    do
+    Console.WriteLine();
+    Console.WriteLine("--- FT LOGIN STATUS BEFORE ---");
+    try
     {
-        downloadFeedback = await serviceClient.GetDownloadFeedback(controller.ControllerGuid);
-
-        foreach (var message in downloadFeedback.Messages)
-        {
-            Console.WriteLine(message);
-        }
-
-        await Task.Delay(500);
+        Console.WriteLine($"IsFactoryTalkUserLoggedIn: {serviceClient.IsFactoryTalkUserLoggedIn()}");
     }
-    while (downloadFeedback.State == OperationState.InProgress);
-
-    Console.WriteLine($"Final state: {downloadFeedback.State}");
-
-    if (downloadFeedback.State == OperationState.Done)
+    catch (Exception ex)
     {
-        Console.WriteLine("=== DOWNLOAD SUCCEEDED ===");
-        return 0;
+        Console.WriteLine("Could not check IsFactoryTalkUserLoggedIn().");
+        Console.WriteLine(ex.ToString());
     }
-    else
+
+    Console.WriteLine();
+    Console.WriteLine("--- TRYING TO LOCATE FactoryTalkServicesPlatformLogin ---");
+
+    TryLoadAssembly("RockwellAutomation.FactoryTalkLogixEcho.Api");
+    TryLoadAssembly("RockwellAutomation.FactoryTalkLogixEcho.Api.Client");
+    TryLoadAssembly("RockwellAutomation.FactoryTalkLogixEcho.Api.Interfaces");
+
+    var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies()
+        .OrderBy(a => a.GetName().Name)
+        .ToList();
+
+    foreach (var asm in loadedAssemblies)
     {
-        Console.WriteLine("=== DOWNLOAD FAILED ===");
-        return 1;
+        Console.WriteLine($"Loaded Assembly: {asm.GetName().Name}");
     }
+
+    var loginType =
+        AppDomain.CurrentDomain.GetAssemblies()
+            .Select(a => a.GetType("RockwellAutomation.FactoryTalkLogixEcho.Api.FactoryTalkServicesPlatformLogin", false))
+            .FirstOrDefault(t => t != null);
+
+    if (loginType == null)
+    {
+        Console.WriteLine();
+        Console.WriteLine("FactoryTalkServicesPlatformLogin type was NOT found.");
+        Console.WriteLine("This means the current runtime does not expose that class through the assemblies available to this app.");
+        Console.WriteLine("Stopping here.");
+        return;
+    }
+
+    Console.WriteLine();
+    Console.WriteLine($"Found type: {loginType.FullName}");
+    Console.WriteLine($"Assembly: {loginType.Assembly.FullName}");
+
+    var loginInstance = Activator.CreateInstance(loginType);
+    if (loginInstance == null)
+    {
+        Console.WriteLine("Could not create FactoryTalkServicesPlatformLogin instance.");
+        return;
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("--- TRYING GetTokenForUser(user, password) ---");
+
+    var getTokenForUser = loginType.GetMethod("GetTokenForUser", new[] { typeof(string), typeof(string) });
+    if (getTokenForUser == null)
+    {
+        Console.WriteLine("GetTokenForUser(string, string) method not found.");
+        return;
+    }
+
+    string? token = null;
+
+    try
+    {
+        token = getTokenForUser.Invoke(loginInstance, new object[] { ftUser, ftPassword }) as string;
+        Console.WriteLine("GetTokenForUser() call returned without throwing.");
+    }
+    catch (TargetInvocationException tie)
+    {
+        Console.WriteLine("GetTokenForUser() threw TargetInvocationException.");
+        Console.WriteLine("--- INNER EXCEPTION ---");
+        Console.WriteLine(tie.InnerException?.ToString() ?? "(none)");
+        return;
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("GetTokenForUser() threw.");
+        Console.WriteLine(ex.ToString());
+        return;
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("--- TOKEN RESULT ---");
+    if (string.IsNullOrWhiteSpace(token))
+    {
+        Console.WriteLine("Token was null or empty.");
+        return;
+    }
+
+    Console.WriteLine($"Token length: {token.Length}");
+    Console.WriteLine($"Masked token: {MaskToken(token)}");
+
+    if (SHOW_FULL_TOKEN)
+    {
+        Console.WriteLine("Full token:");
+        Console.WriteLine(token);
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("--- TRYING LoginFactoryTalkUser(token) ---");
+
+    try
+    {
+        serviceClient.LoginFactoryTalkUser(token);
+        Console.WriteLine("LoginFactoryTalkUser(token) returned without throwing.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("LoginFactoryTalkUser(token) threw.");
+        Console.WriteLine(ex.ToString());
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("--- FT LOGIN STATUS AFTER ---");
+    try
+    {
+        Console.WriteLine($"IsFactoryTalkUserLoggedIn: {serviceClient.IsFactoryTalkUserLoggedIn()}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Could not check IsFactoryTalkUserLoggedIn() after login attempt.");
+        Console.WriteLine(ex.ToString());
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("--- TRYING LogoutFactoryTalk() ---");
+    try
+    {
+        serviceClient.LogoutFactoryTalk();
+        Console.WriteLine("LogoutFactoryTalk() returned without throwing.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("LogoutFactoryTalk() threw.");
+        Console.WriteLine(ex.ToString());
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("=== FTSP TOKEN TROUBLESHOOT END ===");
 }
 catch (Exception ex)
 {
-    Console.WriteLine("=== ERROR ===");
+    Console.WriteLine("=== TOP-LEVEL ERROR ===");
     Console.WriteLine(ex.ToString());
-    return 1;
+}
+
+static void TryLoadAssembly(string assemblyName)
+{
+    try
+    {
+        Assembly.Load(assemblyName);
+        Console.WriteLine($"Assembly.Load succeeded: {assemblyName}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Assembly.Load failed: {assemblyName}");
+        Console.WriteLine($"  {ex.Message}");
+    }
+}
+
+static string MaskToken(string token)
+{
+    if (string.IsNullOrEmpty(token))
+        return "(empty)";
+
+    if (token.Length <= 12)
+        return token;
+
+    return $"{token[..6]}...{token[^6..]}";
 }
