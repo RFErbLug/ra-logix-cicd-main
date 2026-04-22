@@ -8,7 +8,8 @@ namespace UnitTesting_ConsoleApp
         static async Task<int> Main(string[] args)
         {
             string acdFilePath = @"C:\CI-Pipeline-Files\BoilerDemo.ACD";
-            string commPath = LogixEchoMethods.Main(acdFilePath, "Chassis", "iotesting").GetAwaiter().GetResult();
+            string commPath = await LogixEchoMethods.CreateChassisFromACD_Async(acdFilePath, "Chassis");
+
 Console.WriteLine($"COMMPATH = {commPath}");
 
             Console.WriteLine("=== BOILER LOGIC ONLINE TEST START ===");
