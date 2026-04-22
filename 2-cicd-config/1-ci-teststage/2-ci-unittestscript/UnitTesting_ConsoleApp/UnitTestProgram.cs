@@ -1,4 +1,5 @@
 ﻿using RockwellAutomation.LogixDesigner;
+using LogixEcho_ClassLibrary;
 
 namespace UnitTesting_ConsoleApp
 {

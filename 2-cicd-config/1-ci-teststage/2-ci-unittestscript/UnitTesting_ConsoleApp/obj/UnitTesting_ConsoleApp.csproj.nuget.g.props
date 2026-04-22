@@ -12,26 +12,7 @@
   <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <SourceRoot Include="C:\Users\DevOps\.nuget\packages\" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <None Include="$(NuGetPackageRoot)rockwellautomation.factorytalklogixecho.api.client\3.0.1130\contentFiles\any\any\FtspAdapter\FactoryTalk.Security.Interop.dll" Condition="Exists('$(NuGetPackageRoot)rockwellautomation.factorytalklogixecho.api.client\3.0.1130\contentFiles\any\any\FtspAdapter\FactoryTalk.Security.Interop.dll')">
-      <NuGetPackageId>RockwellAutomation.FactoryTalkLogixEcho.Api.Client</NuGetPackageId>
-      <NuGetPackageVersion>3.0.1130</NuGetPackageVersion>
-      <NuGetItemType>None</NuGetItemType>
-      <Pack>false</Pack>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>FactoryTalk.Security.Interop.dll</TargetPath>
-      <Private>True</Private>
-      <Link>FtspAdapter\FactoryTalk.Security.Interop.dll</Link>
-    </None>
-    <None Include="$(NuGetPackageRoot)rockwellautomation.factorytalklogixecho.api.client\3.0.1130\contentFiles\any\any\FtspAdapter\FtspAdapter.exe" Condition="Exists('$(NuGetPackageRoot)rockwellautomation.factorytalklogixecho.api.client\3.0.1130\contentFiles\any\any\FtspAdapter\FtspAdapter.exe')">
-      <NuGetPackageId>RockwellAutomation.FactoryTalkLogixEcho.Api.Client</NuGetPackageId>
-      <NuGetPackageVersion>3.0.1130</NuGetPackageVersion>
-      <NuGetItemType>None</NuGetItemType>
-      <Pack>false</Pack>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>FtspAdapter.exe</TargetPath>
-      <Private>True</Private>
-      <Link>FtspAdapter\FtspAdapter.exe</Link>
-    </None>
-  </ItemGroup>
+  <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Import Project="$(NuGetPackageRoot)rockwellautomation.logixdesigner.csclient\2.1.974\build\RockwellAutomation.LogixDesigner.CSClient.props" Condition="Exists('$(NuGetPackageRoot)rockwellautomation.logixdesigner.csclient\2.1.974\build\RockwellAutomation.LogixDesigner.CSClient.props')" />
+  </ImportGroup>
 </Project>

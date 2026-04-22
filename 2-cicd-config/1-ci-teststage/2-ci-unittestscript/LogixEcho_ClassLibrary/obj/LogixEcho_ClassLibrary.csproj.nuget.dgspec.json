@@ -14,13 +14,13 @@
         "outputPath": "C:\\Users\\DevOps\\Desktop\\ra-logix-cicd-main\\ra-logix-cicd-main\\2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\LogixEcho_ClassLibrary\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\DevOps\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\DevOps\\Desktop\\ra-logix-cicd-main\\ra-logix-cicd-main\\nuget.test.config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Rockwell Automation SDKs": {},
+          "C:\\nuget-local-v3": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
