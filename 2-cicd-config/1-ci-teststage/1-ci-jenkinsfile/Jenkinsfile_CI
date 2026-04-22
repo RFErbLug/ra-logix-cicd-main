@@ -32,11 +32,11 @@ dotnet build -c Release --no-restore
         }
 
         stage('Run') {
-            steps {
-                bat """
-${env.WORKSPACE}\\2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\UnitTesting_ConsoleApp\\bin\\Release\\net8.0-windows\\UnitTesting_ConsoleApp.exe
+    steps {
+        bat """
+${env.WORKSPACE}\\2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\UnitTesting_ConsoleApp\\bin\\Release\\net8.0\\UnitTesting_ConsoleApp.exe
 """
-            }
-        }
+    }
+}
     }
 }
