@@ -152,6 +152,28 @@ namespace UnitTesting_ConsoleApp
                 //
                 Console.WriteLine("\n--- BOILER LOGIC TESTS ---");
 
+                string[] candidatePaths =
+                {
+                    "Controller/Tags/Tag[@Name='Tank1.ValveInCmd']",
+                    "Controller/Tags/Tag[@Name='Tank1']/Member[@Name='ValveInCmd']",
+                    "Controller/Tags/Tag[@Name='Tank1'].Member[@Name='ValveInCmd']"
+                };
+
+                foreach (var path in candidatePaths)
+                {
+                    try
+                    {
+                        Console.WriteLine($"Trying path: {path}");
+                        await logixProject.SetTagValueBOOLAsync(path, LogixProject.OperationMode.Online, false);
+                        Console.WriteLine($"SUCCESS: {path}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"FAIL: {path}");
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+
                 string tank1Level = "Controller/Tags/Tag[@Name='Tank1']/Data[@Name='Level']";
                 string tank1SetPoint = "Controller/Tags/Tag[@Name='Tank1']/Data[@Name='SetPoint']";
                 string tank1ValveInCmd = "Controller/Tags/Tag[@Name='Tank1']/Data[@Name='ValveInCmd']";
