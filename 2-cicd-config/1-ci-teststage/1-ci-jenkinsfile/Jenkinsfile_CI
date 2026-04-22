@@ -16,8 +16,11 @@ pipeline {
 </configuration>
 "@ | Out-File -Encoding utf8 nuget.config
 
+dotnet nuget locals all --clear
+
 cd 2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\UnitTesting_ConsoleApp
-dotnet restore --configfile ..\\..\\..\\..\\nuget.config --no-cache -v minimal
+
+dotnet restore UnitTesting_ConsoleApp.csproj --configfile ..\\..\\..\\..\\nuget.config --no-cache --force -v minimal
 '''
             }
         }
@@ -26,17 +29,29 @@ dotnet restore --configfile ..\\..\\..\\..\\nuget.config --no-cache -v minimal
             steps {
                 powershell '''
 cd 2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\UnitTesting_ConsoleApp
-dotnet build -c Release --no-restore
+dotnet build UnitTesting_ConsoleApp.csproj -c Release --no-restore
 '''
             }
         }
 
         stage('Run') {
-    steps {
-        bat """
+            steps {
+                bat """
 ${env.WORKSPACE}\\2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\UnitTesting_ConsoleApp\\bin\\Release\\net8.0\\UnitTesting_ConsoleApp.exe
 """
+            }
+        }
     }
-}
+
+    post {
+        always {
+            echo 'Pipeline finished.'
+        }
+        success {
+            echo 'SUCCESS'
+        }
+        failure {
+            echo 'FAILURE: Check logs above.'
+        }
     }
 }
