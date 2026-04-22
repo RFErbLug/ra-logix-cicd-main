@@ -11,7 +11,8 @@ namespace UnitTesting_ConsoleApp
         static async Task<int> Main(string[] args)
         {
             string acdFilePath = @"C:\CI-Pipeline-Files\BoilerDemo.ACD";
-            string chassisName = "Chassis";
+            string chassisName = "DemoChassis";
+            bool cleanupOnExit = true;
 
             Console.WriteLine("=== BOILER DEMO TEST START ===");
 
@@ -21,14 +22,14 @@ namespace UnitTesting_ConsoleApp
             try
             {
                 //
-                // PART 1: ECHO SETUP (slot-aware)
+                // PART 1: ECHO SETUP (fresh-ish, slot-aware)
                 //
                 Console.WriteLine("\n--- ECHO SETUP ---");
 
                 var serviceClient = ClientFactory.GetServiceApiClientV2("CI_Demo", 46520);
                 serviceClient.Culture = new CultureInfo("en-US");
 
-                // 1. Find or create chassis
+                // Find or create chassis
                 var chassisList = (await serviceClient.ListChassis()).ToList();
                 ChassisData chassis;
 
@@ -51,7 +52,7 @@ namespace UnitTesting_ConsoleApp
 
                 Console.WriteLine($"ChassisGuid: {chassis.ChassisGuid}");
 
-                // 2. Read controller info from ACD
+                // Read controller info from ACD
                 using var fileHandle = await serviceClient.SendFile(acdFilePath);
                 ControllerUpdate controllerUpdate = await serviceClient.GetControllerInfoFromAcd(fileHandle);
 
@@ -63,7 +64,7 @@ namespace UnitTesting_ConsoleApp
                 Console.WriteLine($"IP1: {controllerUpdate.IPConfigurationData?.Address}");
                 Console.WriteLine($"Netmask1: {controllerUpdate.IPConfigurationData?.Netmask}");
 
-                // 3. Check if controller already exists by name in this chassis
+                // Check if controller already exists by name in this chassis
                 var existingControllers = (await serviceClient.ListControllers(chassis.ChassisGuid)).ToList();
                 ControllerData controllerData;
 
@@ -75,7 +76,7 @@ namespace UnitTesting_ConsoleApp
                 }
                 else
                 {
-                    // 4. Find available slots
+                    // Find available slots
                     var availableSlots = await serviceClient.ListAvailableSlotNumbers(
                         chassis.ChassisGuid,
                         null,
@@ -93,7 +94,6 @@ namespace UnitTesting_ConsoleApp
                         throw new Exception("No available slots found in target chassis.");
                     }
 
-                    // 5. Pick a safe slot
                     uint finalSlot;
                     if (availableSlots.Contains((int)controllerUpdate.Slot))
                     {
@@ -114,7 +114,6 @@ namespace UnitTesting_ConsoleApp
                     Console.WriteLine($"ChassisGuid: {controllerUpdate.ChassisGuid}");
                     Console.WriteLine($"Assigned Slot: {controllerUpdate.Slot}");
 
-                    // 6. Create controller
                     controllerData = await serviceClient.CreateController(controllerUpdate);
 
                     Console.WriteLine("\n--- CREATED CONTROLLER ---");
@@ -137,7 +136,6 @@ namespace UnitTesting_ConsoleApp
                 Console.WriteLine("\n--- LOGIX SDK SETUP ---");
 
                 logixProject = await LogixProject.OpenLogixProjectAsync(acdFilePath);
-
                 await logixProject.SetCommunicationsPathAsync(commPath);
 
                 Console.WriteLine("Changing controller to PROGRAM...");
@@ -175,7 +173,6 @@ namespace UnitTesting_ConsoleApp
                 await logixProject.SetTagValueBOOLAsync(tank2ValveOutCmd, LogixProject.OperationMode.Online, false);
                 await Task.Delay(250);
 
-                // TEST 1
                 Console.WriteLine("\nTEST 1: Tank1 inlet opens below setpoint");
                 await logixProject.SetTagValueDINTAsync(tank1Level, LogixProject.OperationMode.Online, 0);
                 await logixProject.SetTagValueDINTAsync(tank1SetPoint, LogixProject.OperationMode.Online, 50);
@@ -184,7 +181,6 @@ namespace UnitTesting_ConsoleApp
                 bool test1 = await logixProject.GetTagValueBOOLAsync(tank1ValveInStatus, LogixProject.OperationMode.Online);
                 failureCount += CompareExpected("Tank1.ValveInStatus", true, test1);
 
-                // TEST 2
                 Console.WriteLine("\nTEST 2: Tank1 inlet blocked at setpoint");
                 await logixProject.SetTagValueDINTAsync(tank1Level, LogixProject.OperationMode.Online, 50);
                 await logixProject.SetTagValueDINTAsync(tank1SetPoint, LogixProject.OperationMode.Online, 50);
@@ -193,7 +189,6 @@ namespace UnitTesting_ConsoleApp
                 bool test2 = await logixProject.GetTagValueBOOLAsync(tank1ValveInStatus, LogixProject.OperationMode.Online);
                 failureCount += CompareExpected("Tank1.ValveInStatus", false, test2);
 
-                // TEST 3
                 Console.WriteLine("\nTEST 3: Tank1 outlet opens above zero");
                 await logixProject.SetTagValueBOOLAsync(tank1ValveInCmd, LogixProject.OperationMode.Online, false);
                 await logixProject.SetTagValueDINTAsync(tank1Level, LogixProject.OperationMode.Online, 10);
@@ -202,7 +197,6 @@ namespace UnitTesting_ConsoleApp
                 bool test3 = await logixProject.GetTagValueBOOLAsync(tank1ValveOutStatus, LogixProject.OperationMode.Online);
                 failureCount += CompareExpected("Tank1.ValveOutStatus", true, test3);
 
-                // TEST 4
                 Console.WriteLine("\nTEST 4: Tank1 outlet blocked at zero");
                 await logixProject.SetTagValueDINTAsync(tank1Level, LogixProject.OperationMode.Online, 0);
                 await logixProject.SetTagValueBOOLAsync(tank1ValveOutCmd, LogixProject.OperationMode.Online, true);
@@ -210,7 +204,6 @@ namespace UnitTesting_ConsoleApp
                 bool test4 = await logixProject.GetTagValueBOOLAsync(tank1ValveOutStatus, LogixProject.OperationMode.Online);
                 failureCount += CompareExpected("Tank1.ValveOutStatus", false, test4);
 
-                // TEST 5
                 Console.WriteLine("\nTEST 5: Tank2 inlet opens below setpoint");
                 await logixProject.SetTagValueDINTAsync(tank2Level, LogixProject.OperationMode.Online, 0);
                 await logixProject.SetTagValueDINTAsync(tank2SetPoint, LogixProject.OperationMode.Online, 50);
@@ -220,7 +213,6 @@ namespace UnitTesting_ConsoleApp
                 bool test5 = await logixProject.GetTagValueBOOLAsync(tank2ValveInStatus, LogixProject.OperationMode.Online);
                 failureCount += CompareExpected("Tank2.ValveInStatus", true, test5);
 
-                // TEST 6
                 Console.WriteLine("\nTEST 6: Tank2 outlet opens above zero");
                 await logixProject.SetTagValueBOOLAsync(tank2ValveInCmd, LogixProject.OperationMode.Online, false);
                 await logixProject.SetTagValueDINTAsync(tank2Level, LogixProject.OperationMode.Online, 10);
@@ -265,6 +257,21 @@ namespace UnitTesting_ConsoleApp
                     }
                     catch
                     {
+                    }
+                }
+
+                if (cleanupOnExit)
+                {
+                    try
+                    {
+                        Console.WriteLine($"\nCleaning up Echo chassis '{chassisName}'...");
+                        await LogixEchoMethods.DeleteChassis_Async(chassisName);
+                        Console.WriteLine("Echo cleanup complete.");
+                    }
+                    catch (Exception cleanupEx)
+                    {
+                        Console.WriteLine("Echo cleanup failed.");
+                        Console.WriteLine(cleanupEx.ToString());
                     }
                 }
             }
