@@ -10,7 +10,7 @@ namespace UnitTesting_ConsoleApp
     {
         static async Task<int> Main(string[] args)
         {
-            string acdFilePath = @"C:\CI-Pipeline-Files\test.ACD";
+            string acdFilePath = @"C:\CI-Pipeline-Files\BoilerDemo.ACD";
             string chassisName = "Chassis";
 
             Console.WriteLine("=== BOILER DEMO TEST START ===");
