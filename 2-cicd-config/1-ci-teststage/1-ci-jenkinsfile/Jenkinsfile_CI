@@ -1,117 +1,41 @@
 pipeline {
     agent any
 
-    triggers {
-        pollSCM('* * * * *')
-    }
-
     stages {
-
-        stage('Ensure Echo Running') {
+        stage('Restore') {
             steps {
                 powershell '''
-$serviceName = "FactoryTalk Logix Echo Service"
-
-Write-Host "Checking Echo service..."
-
-$service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
-
-if (-not $service) {
-    throw "Echo service not found"
-}
-
-if ($service.Status -ne "Running") {
-    Write-Host "Starting Echo service..."
-    Start-Service -Name $serviceName
-    Start-Sleep -Seconds 5
-}
-
-# Re-check status
-$service = Get-Service -Name $serviceName
-
-if ($service.Status -ne "Running") {
-    throw "Echo service failed to start"
-}
-
-Write-Host "Echo service is running"
-
-# Verify port is open (gRPC)
-$port = 46520
-$maxRetries = 10
-$delay = 3
-
-$ready = $false
-
-for ($i = 0; $i -lt $maxRetries; $i++) {
-
-    Write-Host "Checking port $port (attempt $($i+1))..."
-
-    $portCheck = netstat -ano | findstr $port
-
-    if ($portCheck) {
-        $ready = $true
-        break
-    }
-
-    Start-Sleep -Seconds $delay
-}
-
-if (-not $ready) {
-    throw "Echo is not listening on port $port after waiting"
-}
-
-Write-Host "Echo port verified"
-'''
-            }
-        }
-
-        stage('Test') {
-            steps {
-
-                echo "=== CLEAN CI TEST START ==="
-
-                powershell '''
-$nugetConfig = "nuget.config"
-
-Write-Host "=== CREATE LOCAL NUGET CONFIG ==="
-
 @"
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <packageSources>
     <clear />
-    <add key="RockwellSDK" value="C:\\nuget-local" />
+    <add key="LocalV3" value="C:\\nuget-local-v3" />
     <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
   </packageSources>
 </configuration>
-"@ | Out-File -Encoding utf8 $nugetConfig
-
-Write-Host "=== MOVE TO PROJECT ==="
+"@ | Out-File -Encoding utf8 nuget.config
 
 cd 2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\UnitTesting_ConsoleApp
-
-dir
-
-Write-Host "=== RESTORE ==="
-dotnet restore --configfile ..\\..\\..\\..\\nuget.config --no-cache -v normal
-
-Write-Host "=== BUILD ==="
-dotnet build -c Release --no-restore
+dotnet restore --configfile ..\\..\\..\\..\\nuget.config --no-cache -v minimal
 '''
-
-                echo "Running executable..."
-
-                bat """
-${env.WORKSPACE}\\2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\UnitTesting_ConsoleApp\\bin\\Release\\net8.0\\UnitTesting_ConsoleApp.exe
-"""
-
-                echo "=== CLEAN CI TEST END ==="
             }
         }
 
-        stage('Clean Workspace') {
+        stage('Build') {
             steps {
-                cleanWs()
+                powershell '''
+cd 2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\UnitTesting_ConsoleApp
+dotnet build -c Release --no-restore
+'''
+            }
+        }
+
+        stage('Run') {
+            steps {
+                bat """
+${env.WORKSPACE}\\2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\UnitTesting_ConsoleApp\\bin\\Release\\net8.0-windows\\UnitTesting_ConsoleApp.exe
+"""
             }
         }
     }

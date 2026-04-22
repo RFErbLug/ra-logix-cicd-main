@@ -14,19 +14,18 @@
         "outputPath": "C:\\Users\\DevOps\\Desktop\\ra-logix-cicd-main\\ra-logix-cicd-main\\2-cicd-config\\1-ci-teststage\\2-ci-unittestscript\\UnitTesting_ConsoleApp\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\DevOps\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\DevOps\\Desktop\\ra-logix-cicd-main\\ra-logix-cicd-main\\nuget.config"
         ],
         "originalTargetFrameworks": [
-          "net8.0"
+          "net8.0-windows"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Rockwell Automation SDKs": {},
-          "C:\\nuget-local": {},
+          "C:\\nuget-local-v3": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net8.0": {
-            "targetAlias": "net8.0",
+          "net8.0-windows7.0": {
+            "targetAlias": "net8.0-windows",
             "projectReferences": {}
           }
         },
@@ -42,24 +41,12 @@
         }
       },
       "frameworks": {
-        "net8.0": {
-          "targetAlias": "net8.0",
+        "net8.0-windows7.0": {
+          "targetAlias": "net8.0-windows",
           "dependencies": {
-            "EPPlus": {
+            "RockwellAutomation.FactoryTalkLogixEcho.Api.Client": {
               "target": "Package",
-              "version": "[7.3.2, )"
-            },
-            "Google.Protobuf": {
-              "target": "Package",
-              "version": "[3.32.0, )"
-            },
-            "Grpc.Net.Client": {
-              "target": "Package",
-              "version": "[2.60.0, )"
-            },
-            "System.Text.Json": {
-              "target": "Package",
-              "version": "[8.0.5, )"
+              "version": "[3.0.1130, )"
             }
           },
           "imports": [
