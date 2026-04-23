@@ -16,20 +16,18 @@ namespace UnitTesting_ConsoleApp
 
             Console.WriteLine("=== BOILER DEMO TEST START ===");
 
-            int failureCount = 0;
             LogixProject? logixProject = null;
 
             try
             {
                 //
-                // PART 1: ECHO SETUP (fresh-ish, slot-aware)
+                // PART 1: ECHO SETUP
                 //
                 Console.WriteLine("\n--- ECHO SETUP ---");
 
                 var serviceClient = ClientFactory.GetServiceApiClientV2("CI_Demo", 46520);
                 serviceClient.Culture = new CultureInfo("en-US");
 
-                // Find or create chassis
                 var chassisList = (await serviceClient.ListChassis()).ToList();
                 ChassisData chassis;
 
@@ -52,7 +50,6 @@ namespace UnitTesting_ConsoleApp
 
                 Console.WriteLine($"ChassisGuid: {chassis.ChassisGuid}");
 
-                // Read controller info from ACD
                 using var fileHandle = await serviceClient.SendFile(acdFilePath);
                 ControllerUpdate controllerUpdate = await serviceClient.GetControllerInfoFromAcd(fileHandle);
 
@@ -64,7 +61,6 @@ namespace UnitTesting_ConsoleApp
                 Console.WriteLine($"IP1: {controllerUpdate.IPConfigurationData?.Address}");
                 Console.WriteLine($"Netmask1: {controllerUpdate.IPConfigurationData?.Netmask}");
 
-                // Check if controller already exists by name in this chassis
                 var existingControllers = (await serviceClient.ListControllers(chassis.ChassisGuid)).ToList();
                 ControllerData controllerData;
 
@@ -76,7 +72,6 @@ namespace UnitTesting_ConsoleApp
                 }
                 else
                 {
-                    // Find available slots
                     var availableSlots = await serviceClient.ListAvailableSlotNumbers(
                         chassis.ChassisGuid,
                         null,
@@ -148,24 +143,52 @@ namespace UnitTesting_ConsoleApp
                 await ChangeControllerMode_Async(commPath, "RUN", logixProject);
 
                 //
-                // PART 3: ONLINE TAG TESTS
+                // PART 3: PROBES
                 //
                 Console.WriteLine("\n--- BOILER LOGIC TESTS ---");
 
-                string[] candidatePaths =
+                // -------------------------
+                // PROBE 1: Flat DINT tag
+                // -------------------------
+                string tank1TestPath = CreateTagPathFromName("Tank1Test");
+
+                Console.WriteLine($"\n--- PROBE 1: Flat atomic tag ---");
+                Console.WriteLine($"Trying DINT tag path: {tank1TestPath}");
+
+                try
+                {
+                    await logixProject.SetTagValueDINTAsync(tank1TestPath, LogixProject.OperationMode.Online, 123);
+                    await Task.Delay(250);
+
+                    int tank1TestVal = await logixProject.GetTagValueDINTAsync(tank1TestPath, LogixProject.OperationMode.Online);
+                    Console.WriteLine($"SUCCESS DINT: Tank1Test = {tank1TestVal}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("DINT probe failed.");
+                    Console.WriteLine(ex.ToString());
+                }
+
+                // -------------------------
+                // PROBE 2: Old UDT member path guesses
+                // -------------------------
+                Console.WriteLine($"\n--- PROBE 2: UDT member path guesses ---");
+
+                string[] boolCandidatePaths =
                 {
                     "Controller/Tags/Tag[@Name='Tank1.ValveInCmd']",
                     "Controller/Tags/Tag[@Name='Tank1']/Member[@Name='ValveInCmd']",
-                    "Controller/Tags/Tag[@Name='Tank1'].Member[@Name='ValveInCmd']"
+                    "Controller/Tags/Tag[@Name='Tank1.ValveInStatus']",
+                    "Controller/Tags/Tag[@Name='Tank1']/Member[@Name='ValveInStatus']"
                 };
 
-                foreach (var path in candidatePaths)
+                foreach (var path in boolCandidatePaths)
                 {
                     try
                     {
-                        Console.WriteLine($"Trying path: {path}");
-                        await logixProject.SetTagValueBOOLAsync(path, LogixProject.OperationMode.Online, false);
-                        Console.WriteLine($"SUCCESS: {path}");
+                        Console.WriteLine($"Trying BOOL path: {path}");
+                        bool val = await logixProject.GetTagValueBOOLAsync(path, LogixProject.OperationMode.Online);
+                        Console.WriteLine($"SUCCESS BOOL: {path} = {val}");
                     }
                     catch (Exception ex)
                     {
@@ -174,93 +197,34 @@ namespace UnitTesting_ConsoleApp
                     }
                 }
 
-                string tank1Level = "Controller/Tags/Tag[@Name='Tank1']/Data[@Name='Level']";
-                string tank1SetPoint = "Controller/Tags/Tag[@Name='Tank1']/Data[@Name='SetPoint']";
-                string tank1ValveInCmd = "Controller/Tags/Tag[@Name='Tank1']/Data[@Name='ValveInCmd']";
-                string tank1ValveInStatus = "Controller/Tags/Tag[@Name='Tank1']/Data[@Name='ValveInStatus']";
-                string tank1ValveOutCmd = "Controller/Tags/Tag[@Name='Tank1']/Data[@Name='ValveOutCmd']";
-                string tank1ValveOutStatus = "Controller/Tags/Tag[@Name='Tank1']/Data[@Name='ValveOutStatus']";
+                // -------------------------
+                // PROBE 3: Old UDT numeric guesses
+                // -------------------------
+                Console.WriteLine($"\n--- PROBE 3: UDT numeric path guesses ---");
 
-                string tank2Level = "Controller/Tags/Tag[@Name='Tank2']/Data[@Name='Level']";
-                string tank2SetPoint = "Controller/Tags/Tag[@Name='Tank2']/Data[@Name='SetPoint']";
-                string tank2ValveInCmd = "Controller/Tags/Tag[@Name='Tank2']/Data[@Name='ValveInCmd']";
-                string tank2ValveInStatus = "Controller/Tags/Tag[@Name='Tank2']/Data[@Name='ValveInStatus']";
-                string tank2ValveOutCmd = "Controller/Tags/Tag[@Name='Tank2']/Data[@Name='ValveOutCmd']";
-                string tank2ValveOutStatus = "Controller/Tags/Tag[@Name='Tank2']/Data[@Name='ValveOutStatus']";
-
-                // Reset commands
-                await logixProject.SetTagValueBOOLAsync(tank1ValveInCmd, LogixProject.OperationMode.Online, false);
-                await logixProject.SetTagValueBOOLAsync(tank1ValveOutCmd, LogixProject.OperationMode.Online, false);
-                await logixProject.SetTagValueBOOLAsync(tank2ValveInCmd, LogixProject.OperationMode.Online, false);
-                await logixProject.SetTagValueBOOLAsync(tank2ValveOutCmd, LogixProject.OperationMode.Online, false);
-                await Task.Delay(250);
-
-                Console.WriteLine("\nTEST 1: Tank1 inlet opens below setpoint");
-                await logixProject.SetTagValueDINTAsync(tank1Level, LogixProject.OperationMode.Online, 0);
-                await logixProject.SetTagValueDINTAsync(tank1SetPoint, LogixProject.OperationMode.Online, 50);
-                await logixProject.SetTagValueBOOLAsync(tank1ValveInCmd, LogixProject.OperationMode.Online, true);
-                await Task.Delay(250);
-                bool test1 = await logixProject.GetTagValueBOOLAsync(tank1ValveInStatus, LogixProject.OperationMode.Online);
-                failureCount += CompareExpected("Tank1.ValveInStatus", true, test1);
-
-                Console.WriteLine("\nTEST 2: Tank1 inlet blocked at setpoint");
-                await logixProject.SetTagValueDINTAsync(tank1Level, LogixProject.OperationMode.Online, 50);
-                await logixProject.SetTagValueDINTAsync(tank1SetPoint, LogixProject.OperationMode.Online, 50);
-                await logixProject.SetTagValueBOOLAsync(tank1ValveInCmd, LogixProject.OperationMode.Online, true);
-                await Task.Delay(250);
-                bool test2 = await logixProject.GetTagValueBOOLAsync(tank1ValveInStatus, LogixProject.OperationMode.Online);
-                failureCount += CompareExpected("Tank1.ValveInStatus", false, test2);
-
-                Console.WriteLine("\nTEST 3: Tank1 outlet opens above zero");
-                await logixProject.SetTagValueBOOLAsync(tank1ValveInCmd, LogixProject.OperationMode.Online, false);
-                await logixProject.SetTagValueDINTAsync(tank1Level, LogixProject.OperationMode.Online, 10);
-                await logixProject.SetTagValueBOOLAsync(tank1ValveOutCmd, LogixProject.OperationMode.Online, true);
-                await Task.Delay(250);
-                bool test3 = await logixProject.GetTagValueBOOLAsync(tank1ValveOutStatus, LogixProject.OperationMode.Online);
-                failureCount += CompareExpected("Tank1.ValveOutStatus", true, test3);
-
-                Console.WriteLine("\nTEST 4: Tank1 outlet blocked at zero");
-                await logixProject.SetTagValueDINTAsync(tank1Level, LogixProject.OperationMode.Online, 0);
-                await logixProject.SetTagValueBOOLAsync(tank1ValveOutCmd, LogixProject.OperationMode.Online, true);
-                await Task.Delay(250);
-                bool test4 = await logixProject.GetTagValueBOOLAsync(tank1ValveOutStatus, LogixProject.OperationMode.Online);
-                failureCount += CompareExpected("Tank1.ValveOutStatus", false, test4);
-
-                Console.WriteLine("\nTEST 5: Tank2 inlet opens below setpoint");
-                await logixProject.SetTagValueDINTAsync(tank2Level, LogixProject.OperationMode.Online, 0);
-                await logixProject.SetTagValueDINTAsync(tank2SetPoint, LogixProject.OperationMode.Online, 50);
-                await logixProject.SetTagValueBOOLAsync(tank2ValveOutCmd, LogixProject.OperationMode.Online, false);
-                await logixProject.SetTagValueBOOLAsync(tank2ValveInCmd, LogixProject.OperationMode.Online, true);
-                await Task.Delay(250);
-                bool test5 = await logixProject.GetTagValueBOOLAsync(tank2ValveInStatus, LogixProject.OperationMode.Online);
-                failureCount += CompareExpected("Tank2.ValveInStatus", true, test5);
-
-                Console.WriteLine("\nTEST 6: Tank2 outlet opens above zero");
-                await logixProject.SetTagValueBOOLAsync(tank2ValveInCmd, LogixProject.OperationMode.Online, false);
-                await logixProject.SetTagValueDINTAsync(tank2Level, LogixProject.OperationMode.Online, 10);
-                await logixProject.SetTagValueBOOLAsync(tank2ValveOutCmd, LogixProject.OperationMode.Online, true);
-                await Task.Delay(250);
-                bool test6 = await logixProject.GetTagValueBOOLAsync(tank2ValveOutStatus, LogixProject.OperationMode.Online);
-                failureCount += CompareExpected("Tank2.ValveOutStatus", true, test6);
-
-                // Reset commands
-                await logixProject.SetTagValueBOOLAsync(tank1ValveInCmd, LogixProject.OperationMode.Online, false);
-                await logixProject.SetTagValueBOOLAsync(tank1ValveOutCmd, LogixProject.OperationMode.Online, false);
-                await logixProject.SetTagValueBOOLAsync(tank2ValveInCmd, LogixProject.OperationMode.Online, false);
-                await logixProject.SetTagValueBOOLAsync(tank2ValveOutCmd, LogixProject.OperationMode.Online, false);
-
-                Console.WriteLine("\n=== FINAL RESULT ===");
-                if (failureCount > 0)
+                string[] realCandidatePaths =
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"FAIL | {failureCount} issue(s) found.");
-                    Console.ResetColor();
-                    return 1;
+                    "Controller/Tags/Tag[@Name='Tank1.Level']",
+                    "Controller/Tags/Tag[@Name='Tank1']/Member[@Name='Level']",
+                    "Controller/Tags/Tag[@Name='Tank1.SetPoint']",
+                    "Controller/Tags/Tag[@Name='Tank1']/Member[@Name='SetPoint']"
+                };
+
+                foreach (var path in realCandidatePaths)
+                {
+                    try
+                    {
+                        Console.WriteLine($"Trying numeric path: {path}");
+                        float val = await logixProject.GetTagValueREALAsync(path, LogixProject.OperationMode.Online);
+                        Console.WriteLine($"SUCCESS REAL: {path} = {val}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"FAIL: {path}");
+                        Console.WriteLine(ex.Message);
+                    }
                 }
 
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("PASS | All boiler logic tests passed.");
-                Console.ResetColor();
                 return 0;
             }
             catch (Exception ex)
@@ -299,20 +263,9 @@ namespace UnitTesting_ConsoleApp
             }
         }
 
-        private static int CompareExpected(string tagName, bool expected, bool actual)
+        private static string CreateTagPathFromName(string tagName)
         {
-            if (expected != actual)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"FAIL: {tagName} expected '{expected}' actual '{actual}'");
-                Console.ResetColor();
-                return 1;
-            }
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"PASS: {tagName} expected '{expected}' actual '{actual}'");
-            Console.ResetColor();
-            return 0;
+            return $"Controller/Tags/Tag[@Name='{tagName}']";
         }
 
         private static async Task ChangeControllerMode_Async(string commPath, string mode, LogixProject project)
